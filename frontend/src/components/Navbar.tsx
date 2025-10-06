@@ -13,7 +13,7 @@ const Navbar = () => {
         </div>
         <div className="mt-4 ml-96" style={{fontFamily: "Funnel Display"}}>
             <Link to="/login">
-            <Button className="bg-gray-200 text-black cursor-pointer h-12 w-28 text-lg">Login</Button></Link>
+            <Button className="bg-gray-200 text-black cursor-pointer h-12 w-28 text-lg hover:bg-gray-200">Login</Button></Link>
 
             <Link to="/signup">
             <Button className="bg-black text-white ml-4 cursor-pointer h-12 w-28 text-lg hover:bg-gray-200 hover:text-black">Sign up</Button></Link>
