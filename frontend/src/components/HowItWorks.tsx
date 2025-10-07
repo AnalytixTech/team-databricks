@@ -44,9 +44,9 @@ const HowItWorks = () => {
 
 
   return (
-    <div style={{fontFamily: "Funnel Display"}} className="flex justify-center ">
+    <div style={{fontFamily: "Funnel Display"}} className="flex justify-center mt-32 mb-20">
         <div className="flex flex-col items-center gap-4 ">
-            <h1 className="text-2xl ">How it works</h1>
+            <h1 className="text-2xl font-bold">How it works</h1>
             <p>Simple steps for both renters and owners to get started on Fleetly</p>
 
            <div className="inline-flex rounded-full bg-white border-2 border-gray-800 p-1 mb-12">
