@@ -12,7 +12,7 @@ const Subscribe = () => {
                 <div className="max-w-md mx-auto px-4">
                     <form action="">
                         <input type="email" className="flex-1 px-4 py-3 rounded-lg" placeholder="Enter your Email"/>
-                        <Button className="bg-blue-950 ml-4 px-6 py-6 cursor-pointer hover:bg-blue-900 text-lg">Subscribe</Button>
+                        <Button className="bg-blue-950 ml-4 px-6 py-6 cursor-pointer hover:bg-blue-950 text-lg">Subscribe</Button>
                     </form>
                 </div>
             </div>
