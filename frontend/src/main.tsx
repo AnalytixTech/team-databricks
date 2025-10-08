@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.tsx'
 import LoginPage from './pages/LoginPage.tsx'
 import NotFoundPage from './pages/NotFoundPage.tsx'
+import Dashboard from './pages/Dashboard.tsx'
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
     path: '/login',
     element: <LoginPage />
   }, 
+  {
+    path: '/dashboard',
+    element: <Dashboard />
+  },
   {
     path: '*',
     element: <NotFoundPage />
