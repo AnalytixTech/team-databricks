@@ -6,6 +6,7 @@ import Discover from "./components/Discover"
 import Subscribe from "./components/Subscribe"
 import Footer from "./components/Footer"
 
+
 const App = () => {
   return (
     <div>
