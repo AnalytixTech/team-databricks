@@ -49,10 +49,10 @@ const HowItWorks = () => {
             <h1 className="text-2xl font-bold">How it works</h1>
             <p>Simple steps for both renters and owners to get started on Fleetly</p>
 
-           <div className="inline-flex rounded-full bg-white border-2 border-gray-800 p-1 mb-12">
+           <div className="inline-flex rounded-2xl bg-white border-2 border-gray-800 p-1 mb-12">
           <button
             onClick={() => setActiveTab('renters')}
-            className={`px-8 py-2 rounded-full font-semibold transition-all ${
+            className={`px-8 py-2 rounded-2xl font-semibold transition-all ${
               activeTab === 'renters' 
                 ? 'bg-blue-950 text-white' 
                 : 'bg-transparent text-gray-800'
@@ -62,9 +62,9 @@ const HowItWorks = () => {
           </button>
           <button
             onClick={() => setActiveTab('owners')}
-            className={`px-8 py-2 rounded-full font-semibold transition-all ${
+            className={`px-8 py-2 rounded-2xl font-semibold transition-all ${
               activeTab === 'owners' 
-                ? 'bg-blue-950 text-white' 
+                ? 'bg-blue-950 text-white ' 
                 : 'bg-transparent text-gray-800'
             }`}
           >
