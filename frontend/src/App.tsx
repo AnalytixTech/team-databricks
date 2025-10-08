@@ -4,6 +4,7 @@ import HowItWorks from "./components/HowItWorks"
 import WhyChooseUs from "./components/WhyChooseUs"
 import Discover from "./components/Discover"
 import Subscribe from "./components/Subscribe"
+import Footer from "./components/Footer"
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
         <WhyChooseUs />
         <Discover />
         <Subscribe />
+        <Footer />
     </div>
   )
 }
