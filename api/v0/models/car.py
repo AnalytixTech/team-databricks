@@ -3,8 +3,8 @@ from bson import ObjectId
 from typing import Optional, Dict, Any, List, BinaryIO
 from enum import Enum
 from flask import current_app
-from services.file_upload import file_upload_service
-from services.cloud_storage import cloud_storage
+from api.v0.services.file_upload import file_upload_service
+from api.v0.services.cloud_storage import cloud_storage
 
 class CarType(Enum):
     """Car type enumeration"""

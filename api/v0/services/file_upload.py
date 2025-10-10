@@ -2,15 +2,15 @@ import os
 from typing import Optional, Dict, Any
 from werkzeug.datastructures import FileStorage
 from PIL import Image
-from flask import current_app
+from api.v0.app import app
 from .cloud_storage import cloud_storage
 
 class FileUploadService:
     """Service for handling file uploads with validation and cloud storage"""
     
     def __init__(self):
-        self.allowed_extensions = current_app.config.get('ALLOWED_EXTENSIONS', {'png', 'jpg', 'jpeg', 'gif', 'pdf'})
-        self.max_file_size = current_app.config.get('MAX_CONTENT_LENGTH', 16 * 1024 * 1024)
+        self.allowed_extensions = app.config.get('ALLOWED_EXTENSIONS', {'png', 'jpg', 'jpeg', 'gif', 'pdf'})
+        self.max_file_size = app.config.get('MAX_CONTENT_LENGTH', 16 * 1024 * 1024)
     
     def validate_file(self, file: FileStorage) -> Dict[str, Any]:
         """Validate uploaded file"""

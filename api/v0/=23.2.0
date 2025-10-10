@@ -1,0 +1,21 @@
+Requirement already satisfied: PyOpenSSL in /usr/local/lib/python3.7/site-packages (24.3.0)
+Collecting PyOpenSSL
+  Downloading pyopenssl-25.3.0-py3-none-any.whl.metadata (17 kB)
+Collecting cryptography<47,>=45.0.7 (from PyOpenSSL)
+  Downloading cryptography-45.0.7-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (5.7 kB)
+Requirement already satisfied: cffi>=1.14 in /usr/local/lib/python3.7/site-packages (from cryptography<47,>=45.0.7->PyOpenSSL) (1.15.0)
+Requirement already satisfied: pycparser in /usr/local/lib/python3.7/site-packages (from cffi>=1.14->cryptography<47,>=45.0.7->PyOpenSSL) (2.21)
+Downloading pyopenssl-25.3.0-py3-none-any.whl (57 kB)
+   ━━━━━━━━━━━━━━━ 57.3/57.3 kB 476.8 kB/s eta 0:00:00
+Downloading cryptography-45.0.7-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.4 MB)
+   ━━━━━━━━━━━━━━━━━━ 4.4/4.4 MB 11.1 MB/s eta 0:00:00
+Installing collected packages: cryptography, PyOpenSSL
+  Attempting uninstall: cryptography
+    Found existing installation: cryptography 44.0.3
+    Uninstalling cryptography-44.0.3:
+      Successfully uninstalled cryptography-44.0.3
+  Attempting uninstall: PyOpenSSL
+    Found existing installation: pyOpenSSL 24.3.0
+    Uninstalling pyOpenSSL-24.3.0:
+      Successfully uninstalled pyOpenSSL-24.3.0
+Successfully installed PyOpenSSL-25.3.0 cryptography-45.0.7

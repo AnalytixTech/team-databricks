@@ -42,7 +42,7 @@ class Config:
     PROFILE_IMAGES_PATH = 'profile-images/'
     
     # CORS Configuration
-    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', '*').split(',')
+    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', '*, /api/v0/').split(',')
     
     # Rate Limiting
     RATELIMIT_STORAGE_URL = os.environ.get('REDIS_URL') or 'memory://'
@@ -50,6 +50,7 @@ class Config:
     # Pagination
     DEFAULT_PAGE_SIZE = 20
     MAX_PAGE_SIZE = 100
+
 
 class DevelopmentConfig(Config):
     """Development configuration"""

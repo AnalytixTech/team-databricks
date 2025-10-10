@@ -54,8 +54,9 @@ class User:
         salt = bcrypt.gensalt(rounds=12)
         hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
         return hashed.decode('utf-8')
-    
-    def check_password(self, password: str) -> bool:
+
+    @staticmethod    
+    def check_password(password: str) -> bool:
         """Check if provided password matches the hash"""
         if not self.password_hash:
             return False

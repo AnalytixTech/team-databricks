@@ -1,5 +1,5 @@
 from flask import current_app
-from database import db
+from api.v0.database import db
 from .cloud_storage import cloud_storage
 
 class HealthCheckService:
