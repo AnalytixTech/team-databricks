@@ -10,6 +10,6 @@ from api.v0.database import db
 def get_users():
     '''retrive users from storage.'''
 
-    print('hello world')
+    
     users = db.users.find()
     print(user)
