@@ -133,6 +133,8 @@ export interface IReservation extends Document {
   reservationType: ReservationType;
   startDate: Date;
   endDate: Date;
+  startTime?: string; // Optional time in HH:mm format
+  endTime?: string; // Optional time in HH:mm format
   status: ReservationStatus;
   totalPrice: number;
   depositPaid: number;
@@ -141,6 +143,18 @@ export interface IReservation extends Document {
   createdAt: Date;
   updatedAt: Date;
   cancelledAt?: Date;
+  pickedUpAt?: Date;
+  returnedAt?: Date;
+  pickupLocation?: {
+    latitude: number;
+    longitude: number;
+    address?: string;
+  };
+  returnLocation?: {
+    latitude: number;
+    longitude: number;
+    address?: string;
+  };
   rating?: {
     stars: number;
     review?: string;
