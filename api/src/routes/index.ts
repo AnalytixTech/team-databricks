@@ -2,6 +2,7 @@ import { Router } from 'express';
 import authRoutes from './auth.routes';
 import carRoutes from "./car.routes";
 import paymentRoutes from "./payment.routes";
+import chatRoutes from "./chat.routes";
 
 const router = Router();
 
@@ -9,6 +10,7 @@ const router = Router();
 router.use('/auth', authRoutes);
 router.use('/cars', carRoutes);
 router.use("/payments", paymentRoutes);
+router.use("/chat", chatRoutes);
 
 
 // Health check

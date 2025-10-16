@@ -1,4 +1,5 @@
 import express, { Application } from 'express';
+import { createServer } from "http";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -9,7 +10,7 @@ import routes from "./routes";
 import { errorHandler, notFoundHandler } from "./middleware/error.middleware";
 import { RATE_LIMIT } from "./utils/constants";
 import passport from './config/passport';
-
+import { initializeSocket } from "./socket/chat.socket";
 
 // Load environment variables
 dotenv.config();
@@ -68,10 +69,45 @@ app.use(notFoundHandler);
 // Error Handler
 app.use(errorHandler);
 
-const port = config.PORT || 5001;
+const PORT = config.PORT || 5001;
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+const httpServer = createServer(app);
+
+// Initialize Socket.IO
+initializeSocket(httpServer);
+
+const server = httpServer.listen(PORT, () => {
+  console.log(`
+╔══════════════════════════════════════════════╗
+║     Fleetly Car Rental Backend               ║
+║     Server running on port ${PORT}              ║
+║     Environment: ${config.NODE_ENV.padEnd(18)}          ║
+║     Database: Connected                      ║
+║     Socket.IO: Initialized                   ║
+╚══════════════════════════════════════════════╝
+  `);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err: Error) => {
+  console.error('Unhandled Promise Rejection:', err);
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err: Error) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received. Shutting down gracefully...');
+  server.close(() => {
+    console.log('Process terminated');
+  });
 });
 
 export default app;
