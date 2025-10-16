@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes';
 import carRoutes from "./car.routes";
+import paymentRoutes from "./payment.routes";
 
 const router = Router();
 
 // Mount routes
 router.use('/auth', authRoutes);
 router.use('/cars', carRoutes);
+router.use("/payments", paymentRoutes);
 
 
 // Health check
