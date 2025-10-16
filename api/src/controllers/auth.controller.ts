@@ -7,6 +7,8 @@ import { AuthRequest, UserRole, ReservationType, ReservationStatus } from '../ty
 import { BadRequestError, UnauthorizedError } from '../utils/errors';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES, HTTP_STATUS } from '../utils/constants';
 import { successResponse } from '../utils/helpers';
+import otpService from '../services/otp.service';
+import { OTPType } from '../models/OTP';
 
 /**
  * Generate JWT token
@@ -138,15 +140,14 @@ export const register = async (
     const token = generateToken(userId, user.email, user.role);
     const refreshToken = generateRefreshToken(userId);
 
+    // Get full user object
+    const userObject = user.toObject();
+    delete userObject.password;
+
     res.status(HTTP_STATUS.CREATED).json(
       successResponse(
         {
-          user: {
-            id: (user._id as any),
-            email: user.email,
-            role: user.role,
-            phone: user.phone,
-          },
+          user: userObject,
           token,
           refreshToken,
           convertedReservations: convertedCount,
@@ -188,15 +189,14 @@ export const login = async (
     const token = generateToken((user._id as any).toString(), user.email, user.role);
     const refreshToken = generateRefreshToken((user._id as any).toString());
 
+    // Get full user object without password
+    const userObject = user.toObject();
+    delete userObject.password;
+
     res.status(HTTP_STATUS.OK).json(
       successResponse(
         {
-          user: {
-            id: (user._id as any),
-            email: user.email,
-            role: user.role,
-            phone: user.phone,
-          },
+          user: userObject,
           token,
           refreshToken,
         },
@@ -316,6 +316,212 @@ export const logout = async (
       success: true,
       message: SUCCESS_MESSAGES.LOGOUT_SUCCESS,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Send OTP for registration
+ */
+export const sendOTP = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { email, type = OTPType.REGISTRATION } = req.body;
+
+    // Check if user already exists for registration OTP
+    if (type === OTPType.REGISTRATION) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        throw new BadRequestError(ERROR_MESSAGES.EMAIL_EXISTS);
+      }
+    }
+
+    // Check if user exists for forgot password OTP
+    if (type === OTPType.FORGOT_PASSWORD) {
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw new BadRequestError('No account found with this email address');
+      }
+    }
+
+    // Send OTP
+    await otpService.sendOTP(email, type);
+
+    res.status(HTTP_STATUS.OK).json(
+      successResponse(
+        { email },
+        'Verification code sent to your email'
+      )
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Verify OTP and complete registration
+ */
+export const verifyOTPAndRegister = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { email, code, password, phone, role, businessName } = req.body;
+
+    // Verify OTP
+    await otpService.verifyOTP(email, code, OTPType.REGISTRATION);
+
+    // Check if user already exists (double-check)
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      throw new BadRequestError(ERROR_MESSAGES.EMAIL_EXISTS);
+    }
+
+    // Validate business owner requirements
+    if (role === UserRole.BUSINESS_OWNER && !businessName) {
+      throw new BadRequestError('Business name is required for business owner registration');
+    }
+
+    // Create user data
+    const userData: any = {
+      email,
+      password,
+      phone,
+      role: role || UserRole.USER,
+      profile: {
+        savedPaymentMethods: [],
+      },
+    };
+
+    // Add business name for business owners
+    if (role === UserRole.BUSINESS_OWNER && businessName) {
+      userData.profile.businessName = businessName;
+    }
+
+    // Create user
+    const user = await User.create(userData);
+
+    // Convert any soft reservations to firm reservations
+    const userId = (user._id as any).toString();
+    const convertedCount = await convertSoftReservationsToFirm(userId, user.email);
+
+    // Generate tokens
+    const token = generateToken(userId, user.email, user.role);
+    const refreshToken = generateRefreshToken(userId);
+
+    // Get full user object
+    const userObject = user.toObject();
+    delete userObject.password;
+
+    res.status(HTTP_STATUS.CREATED).json(
+      successResponse(
+        {
+          user: userObject,
+          token,
+          refreshToken,
+          convertedReservations: convertedCount,
+        },
+        convertedCount > 0
+          ? `Registration successful! We found ${convertedCount} previous booking${convertedCount > 1 ? 's' : ''} and linked them to your account!`
+          : SUCCESS_MESSAGES.REGISTRATION_SUCCESS
+      )
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Resend OTP
+ */
+export const resendOTP = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { email, type = OTPType.REGISTRATION } = req.body;
+
+    // Resend OTP with rate limiting
+    await otpService.resendOTP(email, type);
+
+    res.status(HTTP_STATUS.OK).json(
+      successResponse(
+        { email },
+        'Verification code resent to your email'
+      )
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Forgot password - send OTP
+ */
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { email } = req.body;
+
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new BadRequestError('No account found with this email address');
+    }
+
+    // Send OTP
+    await otpService.sendOTP(email, OTPType.FORGOT_PASSWORD);
+
+    res.status(HTTP_STATUS.OK).json(
+      successResponse(
+        { email },
+        'Password reset code sent to your email'
+      )
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Reset password with OTP
+ */
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { email, code, newPassword } = req.body;
+
+    // Verify OTP
+    await otpService.verifyOTP(email, code, OTPType.FORGOT_PASSWORD);
+
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new BadRequestError('User not found');
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save();
+
+    res.status(HTTP_STATUS.OK).json(
+      successResponse(
+        null,
+        'Password reset successfully. You can now log in with your new password.'
+      )
+    );
   } catch (error) {
     next(error);
   }

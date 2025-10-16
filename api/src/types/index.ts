@@ -3,8 +3,8 @@ import { Document } from 'mongoose';
 
 // User Types
 export enum UserRole {
-  USER = 'user',
-  BUSINESS_OWNER = 'business-owner',
+  USER = 'regular_user',
+  BUSINESS_OWNER = 'business_owner',
 }
 
 export interface IDriverLicense {

@@ -68,7 +68,7 @@ app.use(notFoundHandler);
 // Error Handler
 app.use(errorHandler);
 
-const port = config.PORT || 5000;
+const port = config.PORT || 5001;
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

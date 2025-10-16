@@ -35,8 +35,9 @@ passport.use(
       clientID: config.GOOGLE_CLIENT_ID,
       clientSecret: config.GOOGLE_CLIENT_SECRET,
       callbackURL: config.GOOGLE_CALLBACK_URL,
+      passReqToCallback: true, // Pass request to callback to access state
     },
-    async (_accessToken, _refreshToken, profile: Profile, done) => {
+    async (req: any, _accessToken, _refreshToken, profile: Profile, done) => {
       try {
         // Check if user already exists
         let user = await User.findOne({ googleId: profile.id });
@@ -55,11 +56,17 @@ passport.use(
             user.googleId = profile.id;
             await user.save();
           } else {
-            // Create new user
+            // Get role from state parameter (passed from auth route)
+            const roleFromState = req.query.state || 'regular_user';
+            const userRole = roleFromState === 'business_owner' ? UserRole.BUSINESS_OWNER : UserRole.USER;
+
+            console.log(`🔐 Creating new Google OAuth user with role: ${userRole}`);
+
+            // Create new user with specified role
             user = await User.create({
               email,
               googleId: profile.id,
-              role: UserRole.USER,
+              role: userRole,
               profile: {
                 savedPaymentMethods: [],
               },

@@ -1149,6 +1149,117 @@ class EmailService {
       // Don't throw - reminder emails are non-critical
     }
   }
+
+  /**
+   * Send OTP verification email
+   */
+  async sendOTPEmail(
+    to: string,
+    code: string,
+    type: 'registration' | 'forgot-password'
+  ): Promise<void> {
+    const subject = type === 'registration' 
+      ? '🔐 Verify Your Email - Fleetly'
+      : '🔑 Reset Your Password - Fleetly';
+
+    const title = type === 'registration'
+      ? 'Verify Your Email Address'
+      : 'Reset Your Password';
+
+    const description = type === 'registration'
+      ? 'Welcome to Fleetly! Please verify your email address to complete your registration.'
+      : 'You requested to reset your password. Use the code below to create a new password.';
+
+    const msg = {
+      to,
+      from: {
+        email: this.from,
+        name: 'Fleetly Car Rental'
+      },
+      replyTo: this.from,
+      subject,
+      html: `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>${title}</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background-color: #f3f4f6;">
+          <div style="max-width: 600px; margin: 0 auto; background: #ffffff;">
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; padding: 40px 20px; text-align: center;">
+              <h1 style="margin: 0; font-size: 32px; font-weight: 700;">🚗 Fleetly</h1>
+              <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.95;">Your Trusted Car Rental Partner</p>
+            </div>
+            
+            <!-- Main Content -->
+            <div style="padding: 50px 40px;">
+              <h2 style="color: #1e293b; font-size: 26px; margin: 0 0 15px 0; font-weight: 600;">
+                ${title}
+              </h2>
+              
+              <p style="font-size: 16px; margin: 0 0 30px 0; color: #64748b;">
+                ${description}
+              </p>
+              
+              <!-- OTP Code Box -->
+              <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 2px solid #2563eb; border-radius: 12px; padding: 30px; text-align: center; margin: 30px 0;">
+                <p style="margin: 0 0 10px 0; font-size: 14px; color: #475569; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">
+                  Your Verification Code
+                </p>
+                <div style="font-size: 48px; font-weight: 700; color: #2563eb; letter-spacing: 8px; font-family: 'Courier New', monospace; margin: 10px 0;">
+                  ${code}
+                </div>
+                <p style="margin: 15px 0 0 0; font-size: 13px; color: #64748b;">
+                  Valid for 10 minutes
+                </p>
+              </div>
+              
+              <!-- Security Notice -->
+              <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 20px; margin: 30px 0; border-radius: 0 8px 8px 0;">
+                <h4 style="color: #991b1b; margin: 0 0 10px 0; font-size: 16px; font-weight: 600;">
+                  🔒 Security Notice
+                </h4>
+                <ul style="margin: 0; padding-left: 20px; color: #7f1d1d; font-size: 14px;">
+                  <li>Never share this code with anyone</li>
+                  <li>Fleetly staff will never ask for this code</li>
+                  <li>If you didn't request this code, please ignore this email</li>
+                </ul>
+              </div>
+              
+              <p style="font-size: 15px; margin: 30px 0 0 0; color: #64748b;">
+                ${type === 'registration' 
+                  ? 'After verification, you\'ll be able to browse and rent cars immediately.' 
+                  : 'After resetting your password, you can log in with your new credentials.'}
+              </p>
+            </div>
+            
+            <!-- Footer -->
+            <div style="background: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+              <p style="margin: 0 0 10px 0; font-size: 14px; color: #64748b;">
+                Need help? Contact us at 
+                <a href="mailto:support@fleetly.com" style="color: #2563eb; text-decoration: none; font-weight: 600;">support@fleetly.com</a>
+              </p>
+              <p style="margin: 0; font-size: 12px; color: #94a3b8;">
+                © ${new Date().getFullYear()} Fleetly. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+    };
+
+    try {
+      await sgMail.send(msg);
+      console.log(`✅ OTP email sent to ${to} for ${type}`);
+    } catch (error) {
+      console.error('Error sending OTP email:', error);
+      throw new Error('Failed to send verification email. Please try again.');
+    }
+  }
 }
 
 export default new EmailService();

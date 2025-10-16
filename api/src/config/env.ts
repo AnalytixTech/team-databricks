@@ -34,7 +34,7 @@ const getEnvVar = (key: string, defaultValue?: string): string => {
 
 export const config: EnvConfig = {
   NODE_ENV: getEnvVar('NODE_ENV', 'development'),
-  PORT: parseInt(getEnvVar('PORT', '5000'), 10),
+  PORT: parseInt(getEnvVar('PORT', '5001'), 10),
   MONGODB_URI: getEnvVar('MONGODB_URI', 'mongodb://localhost:27017/fleetly'),
   JWT_SECRET: getEnvVar('JWT_SECRET'),
   JWT_EXPIRE: getEnvVar('JWT_EXPIRE', '7d'),
