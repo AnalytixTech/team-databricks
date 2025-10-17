@@ -292,8 +292,10 @@ export const googleCallback = async (
 
     // Redirect to frontend with tokens
     const frontendUrl = config.FRONTEND_URL;
+    const isNewBusinessOwner = user.isNewBusinessOwner ? '&needsBusinessName=true' : '';
+    
     res.redirect(
-      `${frontendUrl}/auth/callback?token=${token}&refreshToken=${refreshToken}`
+      `${frontendUrl}/auth/callback?token=${token}&refreshToken=${refreshToken}${isNewBusinessOwner}`
     );
   } catch (error) {
     next(error);

@@ -69,8 +69,13 @@ passport.use(
               role: userRole,
               profile: {
                 savedPaymentMethods: [],
+                // Business name will be updated later for business owners
+                ...(userRole === UserRole.BUSINESS_OWNER && { businessName: '' }),
               },
             });
+            
+            // Mark as new user for business owners (to prompt for business name)
+            (user as any).isNewBusinessOwner = userRole === UserRole.BUSINESS_OWNER;
 
             // Convert any soft reservations to firm reservations for new Google users
             try {

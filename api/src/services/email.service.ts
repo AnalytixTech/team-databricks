@@ -6,6 +6,14 @@ sgMail.setApiKey(config.SENDGRID_API_KEY);
 
 class EmailService {
   private from = config.SENDGRID_FROM_EMAIL;
+  
+  // Fleetly Logo SVG for email headers
+  private readonly logoSvg = `
+    <svg width="115" height="32" viewBox="0 0 115 32" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0.5" y="5.29512" width="21.4098" height="21.4098" fill="url(#pattern0_0_6)"/>
+      <path d="M26.4658 26V6.53658H39.3527V9.92937H30.5809V14.5671H38.4974V17.9599H30.5809V26H26.4658ZM46.0932 6.53658V26H42.0446V6.53658H46.0932ZM55.9888 26.2851C54.4872 26.2851 53.1947 25.981 52.1113 25.3728C51.0343 24.7582 50.2043 23.8902 49.6214 22.7688C49.0385 21.641 48.747 20.3073 48.747 18.7677C48.747 17.2662 49.0385 15.9483 49.6214 14.8142C50.2043 13.6801 51.0247 12.7963 52.0828 12.1627C53.1472 11.5291 54.3954 11.2124 55.8272 11.2124C56.7903 11.2124 57.6868 11.3676 58.5168 11.678C59.3531 11.9822 60.0817 12.4415 60.7026 13.0561C61.3298 13.6706 61.8177 14.4436 62.1662 15.3749C62.5146 16.3 62.6889 17.3834 62.6889 18.6252V19.7371H50.3627V17.2282H58.8779C58.8779 16.6453 58.7512 16.1289 58.4978 15.6791C58.2443 15.2292 57.8927 14.8776 57.4429 14.6242C56.9994 14.3644 56.483 14.2345 55.8938 14.2345C55.2792 14.2345 54.7343 14.3771 54.2591 14.6622C53.7903 14.9409 53.4228 15.3179 53.1567 15.7931C52.8906 16.262 52.7544 16.7847 52.7481 17.3612V19.7466C52.7481 20.4689 52.8811 21.093 53.1472 21.6188C53.4197 22.1447 53.803 22.5502 54.2972 22.8353C54.7914 23.1204 55.3774 23.263 56.0553 23.263C56.5052 23.263 56.917 23.1996 57.2908 23.0729C57.6646 22.9462 57.9846 22.7561 58.2507 22.5027C58.5168 22.2492 58.7195 21.9388 58.8589 21.5713L62.6033 21.8184C62.4133 22.7181 62.0236 23.5037 61.4344 24.1753C60.8515 24.8406 60.0975 25.3601 59.1725 25.7339C58.2538 26.1014 57.1926 26.2851 55.9888 26.2851ZM71.9834 26.2851C70.4818 26.2851 69.1893 25.981 68.1059 25.3728C67.0288 24.7582 66.1989 23.8902 65.616 22.7688C65.0331 21.641 64.7416 20.3073 64.7416 18.7677C64.7416 17.2662 65.0331 15.9483 65.616 14.8142C66.1989 13.6801 67.0193 12.7963 68.0774 12.1627C69.1418 11.5291 70.39 11.2124 71.8218 11.2124C72.7849 11.2124 73.6814 11.3676 74.5114 11.678C75.3477 11.9822 76.0763 12.4415 76.6972 13.0561C77.3244 13.6706 77.8123 14.4436 78.1608 15.3749C78.5092 16.3 78.6835 17.3834 78.6835 18.6252V19.7371H66.3573V17.2282H74.8725C74.8725 16.6453 74.7458 16.1289 74.4924 15.6791C74.2389 15.2292 73.8873 14.8776 73.4375 14.6242C72.994 14.3644 72.4776 14.2345 71.8884 14.2345C71.2738 14.2345 70.7289 14.3771 70.2537 14.6622C69.7849 14.9409 69.4174 15.3179 69.1513 15.7931C68.8852 16.262 68.749 16.7847 68.7427 17.3612V19.7466C68.7427 20.4689 68.8757 21.093 69.1418 21.6188C69.4143 22.1447 69.7976 22.5502 70.2918 22.8353C70.7859 23.1204 71.372 23.263 72.0499 23.263C72.4998 23.263 72.9116 23.1996 73.2854 23.0729C73.6592 22.9462 73.9792 22.7561 74.2453 22.5027C74.5114 22.2492 74.7141 21.9388 74.8535 21.5713L78.5979 21.8184C78.4079 22.7181 78.0182 23.5037 77.429 24.1753C76.8461 24.8406 76.0921 25.3601 75.1671 25.7339C74.2484 26.1014 73.1872 26.2851 71.9834 26.2851ZM89.0899 11.4024V14.4436H80.2991V11.4024H89.0899ZM82.2948 7.9051H86.3434V21.5143C86.3434 21.8881 86.4004 22.1795 86.5144 22.3886C86.6285 22.5914 86.7869 22.7339 86.9896 22.8163C87.1987 22.8987 87.4395 22.9398 87.7119 22.9398C87.902 22.9398 88.0921 22.924 88.2821 22.8923C88.4722 22.8543 88.6179 22.8258 88.7193 22.8068L89.356 25.8194C89.1533 25.8828 88.8682 25.9556 88.5007 26.038C88.1332 26.1267 87.6866 26.1806 87.1607 26.1996C86.185 26.2376 85.3297 26.1077 84.5947 25.8099C83.8661 25.5121 83.2991 25.0496 82.8936 24.4224C82.4881 23.7952 82.2885 23.0032 82.2948 22.0465V7.9051ZM96.0894 6.53658V26H92.0408V6.53658H96.0894ZM101.832 31.4741C101.319 31.4741 100.837 31.4329 100.387 31.3505C99.9439 31.2745 99.5764 31.1763 99.2849 31.0559L100.197 28.0338C100.672 28.1795 101.1 28.2587 101.48 28.2714C101.867 28.284 102.199 28.1953 102.478 28.0053C102.763 27.8152 102.995 27.4921 103.172 27.0359L103.41 26.4182L98.173 11.4024H102.431L105.453 22.1225H105.605L108.656 11.4024H112.942L107.268 27.5776C106.996 28.3632 106.625 29.0475 106.156 29.6304C105.694 30.2196 105.107 30.6726 104.398 30.9894C103.688 31.3125 102.833 31.4741 101.832 31.4741Z" fill="#001247"/>
+    </svg>
+  `.trim();
 
   /**
    * Send reservation confirmation email
@@ -36,8 +44,8 @@ class EmailService {
           <div style="max-width: 600px; margin: 0 auto; background: #ffffff;">
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; padding: 30px 20px; text-align: center;">
-              <h1 style="margin: 0; font-size: 28px; font-weight: 700;">Fleetly</h1>
-              <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
+              ${this.logoSvg}
+              <p style="margin: 12px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
             </div>
             
             <!-- Main Content -->
@@ -184,8 +192,8 @@ class EmailService {
           <div style="max-width: 600px; margin: 0 auto; background: #ffffff;">
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: white; padding: 30px 20px; text-align: center;">
-              <h1 style="margin: 0; font-size: 28px; font-weight: 700;">Fleetly</h1>
-              <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
+              ${this.logoSvg}
+              <p style="margin: 12px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
             </div>
             
             <!-- Main Content -->
@@ -339,8 +347,8 @@ class EmailService {
           <div style="max-width: 600px; margin: 0 auto; background: #ffffff;">
             <!-- Header with Urgency -->
             <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 30px 20px; text-align: center;">
-              <h1 style="margin: 0; font-size: 28px; font-weight: 700;">Fleetly</h1>
-              <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
+              ${this.logoSvg}
+              <p style="margin: 12px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
             </div>
             
             <!-- Urgency Banner -->
@@ -520,8 +528,8 @@ class EmailService {
           <div style="max-width: 600px; margin: 0 auto; background: #ffffff;">
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white; padding: 30px 20px; text-align: center;">
-              <h1 style="margin: 0; font-size: 28px; font-weight: 700;">Fleetly</h1>
-              <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
+              ${this.logoSvg}
+              <p style="margin: 12px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
             </div>
             
             <!-- Main Content -->
@@ -720,8 +728,8 @@ class EmailService {
           <div style="max-width: 600px; margin: 0 auto; background: #ffffff;">
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 30px 20px; text-align: center;">
-              <h1 style="margin: 0; font-size: 28px; font-weight: 700;">Fleetly</h1>
-              <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
+              ${this.logoSvg}
+              <p style="margin: 12px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
             </div>
             
             <!-- Notification Banner -->
@@ -923,8 +931,8 @@ class EmailService {
           <div style="max-width: 600px; margin: 0 auto; background: #ffffff;">
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 30px 20px; text-align: center;">
-              <h1 style="margin: 0; font-size: 28px; font-weight: 700;">Fleetly</h1>
-              <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
+              ${this.logoSvg}
+              <p style="margin: 12px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
             </div>
             
             <!-- Reminder Banner -->
@@ -1049,8 +1057,8 @@ class EmailService {
           <div style="max-width: 600px; margin: 0 auto; background: #ffffff;">
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: white; padding: 30px 20px; text-align: center;">
-              <h1 style="margin: 0; font-size: 28px; font-weight: 700;">Fleetly</h1>
-              <p style="margin: 8px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
+              ${this.logoSvg}
+              <p style="margin: 12px 0 0 0; font-size: 16px; opacity: 0.9;">Car Rental Platform</p>
             </div>
             
             <!-- Urgent Banner -->
@@ -1190,8 +1198,8 @@ class EmailService {
           <div style="max-width: 600px; margin: 0 auto; background: #ffffff;">
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; padding: 40px 20px; text-align: center;">
-              <h1 style="margin: 0; font-size: 32px; font-weight: 700;">🚗 Fleetly</h1>
-              <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.95;">Your Trusted Car Rental Partner</p>
+              ${this.logoSvg}
+              <p style="margin: 12px 0 0 0; font-size: 16px; opacity: 0.95;">Your Trusted Car Rental Partner</p>
             </div>
             
             <!-- Main Content -->
