@@ -4,7 +4,8 @@ import carRoutes from "./car.routes";
 import paymentRoutes from "./payment.routes";
 import chatRoutes from "./chat.routes";
 import userRoutes from './user.routes';
-import reservation Routes from './reservation.routes')
+import reservation Routes from './reservation.routes';
+import dashboard Routes from './dashboard.routes';
 
 const router = Router();
 
@@ -15,6 +16,7 @@ router.use("/payments", paymentRoutes);
 router.use("/chat", chatRoutes);
 router.use('/users', userRoutes);
 router.use('/reservations', reservation Routes);
+router.use('/dashboard', dashboard Routes);
 
 // Health check
 router.get('/health', (_req, res) => {
