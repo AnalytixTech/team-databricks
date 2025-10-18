@@ -1,16 +1,18 @@
 import express, { Application } from 'express';
-import { createServer } from "http";
-import cors from "cors";
-import helmet from "helmet";
-import rateLimit from "express-rate-limit";
-import dotenv from "dotenv";
-import connectDB from "./config/database";
-import { config } from "./config/env";
-import routes from "./routes";
-import { errorHandler, notFoundHandler } from "./middleware/error.middleware";
-import { RATE_LIMIT } from "./utils/constants";
+import { createServer } from 'http';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import dotenv from 'dotenv';
+import connectDB from './config/database';
+import { config } from './config/env';
+import routes from './routes';
+import swaggerRoutes from './routes/swagger.routes';
+import { errorHandler, notFoundHandler } from './middleware/error.middleware';
+import { startCronJobs } from './utils/cron.jobs';
+import { RATE_LIMIT } from './utils/constants';
 import passport from './config/passport';
-import { initializeSocket } from "./socket/chat.socket";
+import { initializeSocket } from './socket/chat.socket';
 
 // Load environment variables
 dotenv.config();
@@ -36,15 +38,18 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
-app.use("/api", limiter);
+app.use('/api', limiter);
 
 // Initialize passport
 app.use(passport.initialize());
 
+// API Documentation (Swagger)
+app.use('/api-docs', swaggerRoutes);
+
 // API Routes
 app.use('/api', routes);
 
-// Health check
+// Health check (outside rate limiter)
 app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
@@ -58,10 +63,11 @@ app.get('/', (_req, res) => {
     status: 'ok',
     timestamp: new Date().toISOString(),
     environment: config.NODE_ENV,
-    message: 'Team Databricks Backend',
+    message: 'Fleetly Car Rental Backend',
     version: '2.0.0',
+    documentation: '/api-docs',
   });
-}); 
+});
 
 // 404 Handler
 app.use(notFoundHandler);
@@ -69,7 +75,8 @@ app.use(notFoundHandler);
 // Error Handler
 app.use(errorHandler);
 
-const PORT = config.PORT || 5001;
+// Start server
+const PORT = config.PORT || 5000;
 
 const httpServer = createServer(app);
 
@@ -84,8 +91,12 @@ const server = httpServer.listen(PORT, () => {
 ║     Environment: ${config.NODE_ENV.padEnd(18)}          ║
 ║     Database: Connected                      ║
 ║     Socket.IO: Initialized                   ║
+║     API Docs: http://localhost:${PORT}/api-docs ║
 ╚══════════════════════════════════════════════╝
   `);
+
+  // Start cron jobs
+  startCronJobs();
 });
 
 // Handle unhandled promise rejections
@@ -111,3 +122,4 @@ process.on('SIGTERM', () => {
 });
 
 export default app;
+
