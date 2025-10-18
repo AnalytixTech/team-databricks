@@ -52,6 +52,12 @@ const ReservationSchema = new Schema<IReservation>(
       required: true,
       index: true,
     },
+    startTime: {
+      type: String, // Format: "HH:mm" (e.g., "14:30")
+    },
+    endTime: {
+      type: String, // Format: "HH:mm" (e.g., "16:30")
+    },
     status: {
       type: String,
       enum: Object.values(ReservationStatus),
@@ -79,6 +85,22 @@ const ReservationSchema = new Schema<IReservation>(
     },
     cancelledAt: {
       type: Date,
+    },
+    pickedUpAt: {
+      type: Date,
+    },
+    returnedAt: {
+      type: Date,
+    },
+    pickupLocation: {
+      latitude: Number,
+      longitude: Number,
+      address: String,
+    },
+    returnLocation: {
+      latitude: Number,
+      longitude: Number,
+      address: String,
     },
     rating: {
       stars: {
