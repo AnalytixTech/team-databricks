@@ -1,0 +1,1545 @@
+openapi: 3.0.0
+info:
+  title: Fleetly Car Rental API
+  version: 2.0.0
+  description: |
+    Enterprise-grade car rental platform API with advanced features:
+    - Dual reservation system (guest soft-reserves and authenticated firm-reserves)
+    - Paystack commission splits with subaccounts (6% platform fee)
+    - Real-time chat via Socket.IO
+    - Smart car recommendations based on user history
+    - Driver's license validation
+    - Google OAuth with role selection (regular user or business owner)
+    - Geocoding and map integration
+  contact:
+    name: Fleetly Team
+    email: support@fleetly.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:5000/api
+    description: Development server
+  - url: https://api-fleetly.onrender.com/api
+    description: Production server
+
+externalDocs:
+  description: GitHub Repository & Documentation
+  url: https://github.com/fleetly/backend
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        role:
+          type: string
+          enum: [regular_user, business_owner]
+          description: User role - regular_user for renters, business_owner for car owners
+        googleId:
+          type: string
+          description: Google OAuth ID if user signed up via Google
+        profile:
+          type: object
+          properties:
+            businessName:
+              type: string
+              description: Required for business owners
+            paystackSubaccountCode:
+              type: string
+              description: Paystack subaccount for commission splits
+            bankDetails:
+              type: object
+              properties:
+                bankCode:
+                  type: string
+                accountNumber:
+                  type: string
+                accountName:
+                  type: string
+            driverLicense:
+              type: object
+              required: [number, expiryDate]
+              properties:
+                number:
+                  type: string
+                  description: Driver's license number
+                expiryDate:
+                  type: string
+                  format: date
+                  description: License expiry date (must be future date)
+            savedPaymentMethods:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  authorizationCode:
+                    type: string
+                  last4:
+                    type: string
+                  cardType:
+                    type: string
+
+    Car:
+      type: object
+      properties:
+        _id:
+          type: string
+        make:
+          type: string
+        model:
+          type: string
+        type:
+          type: string
+          enum: [sedan, suv, truck, van, luxury, sports, convertible]
+        year:
+          type: integer
+        licensePlate:
+          type: string
+        rentalPricePerDay:
+          type: number
+        images:
+          type: array
+          items:
+            type: string
+        availability:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [available, unavailable]
+            rules:
+              type: string
+            blockedDates:
+              type: array
+              items:
+                type: string
+                format: date
+        ownerId:
+          type: string
+
+    Reservation:
+      type: object
+      required:
+        - carId
+        - startDate
+        - endDate
+        - totalPrice
+        - reservationType
+        - driverLicense
+      properties:
+        _id:
+          type: string
+        carId:
+          type: string
+          description: Reference to Car ID
+        userId:
+          type: string
+          description: User ID (null for soft reservations)
+        guestInfo:
+          type: object
+          description: Guest information for soft reservations
+          properties:
+            email:
+              type: string
+              format: email
+            phone:
+              type: string
+        reservationType:
+          type: string
+          enum: [soft-reserve, firm-reserve]
+          description: Soft reserves for guests, firm reserves for authenticated users
+        startDate:
+          type: string
+          format: date-time
+          description: Reservation start date and time
+        endDate:
+          type: string
+          format: date-time
+          description: Reservation end date and time
+        startTime:
+          type: string
+          pattern: '^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
+          example: '14:30'
+          description: Optional pickup time (HH:mm format)
+        endTime:
+          type: string
+          pattern: '^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
+          example: '16:30'
+          description: Optional return time (HH:mm format)
+        status:
+          type: string
+          enum: [pending, confirmed, cancelled, completed, picked-up, returned]
+          default: pending
+        totalPrice:
+          type: number
+          minimum: 0
+          description: Total rental price
+        depositPaid:
+          type: number
+          minimum: 0
+          default: 0
+          description: Amount paid as deposit
+        paymentStatus:
+          type: string
+          enum: [pending, deposit-paid, fully-paid, refunded]
+          default: pending
+        driverLicense:
+          type: object
+          required: [number, expiryDate]
+          description: Driver's license information (required for all reservations)
+          properties:
+            number:
+              type: string
+            expiryDate:
+              type: string
+              format: date
+        rating:
+          type: object
+          description: Rating given after completion
+          properties:
+            stars:
+              type: integer
+              minimum: 1
+              maximum: 5
+            review:
+              type: string
+            ratedAt:
+              type: string
+              format: date-time
+        softReserveExpiry:
+          type: string
+          format: date-time
+          description: Expiry time for soft reservations (24 hours)
+        cancelledAt:
+          type: string
+          format: date-time
+          description: Timestamp when reservation was cancelled
+        pickedUpAt:
+          type: string
+          format: date-time
+        returnedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Payment:
+      type: object
+      properties:
+        _id:
+          type: string
+        reservationId:
+          type: string
+        userId:
+          type: string
+        amount:
+          type: number
+          description: Payment amount in Naira
+        type:
+          type: string
+          enum: [deposit, full-payment]
+          description: Payment type - deposit (30%) or full-payment (100%)
+        status:
+          type: string
+          enum: [pending, success, failed]
+          default: pending
+        paystackReference:
+          type: string
+          description: Paystack transaction reference
+        paidAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+
+    Chat:
+      type: object
+      properties:
+        _id:
+          type: string
+        reservationId:
+          type: string
+          description: Associated reservation
+        participants:
+          type: array
+          items:
+            type: string
+          description: Array of user IDs (renter and car owner)
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              senderId:
+                type: string
+              text:
+                type: string
+              timestamp:
+                type: string
+                format: date-time
+              read:
+                type: boolean
+        lastMessageAt:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+        statusCode:
+          type: integer
+
+    Success:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+        data:
+          type: object
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization (JWT + Google OAuth)
+  - name: Cars
+    description: Car inventory management and search
+  - name: Reservations
+    description: Dual reservation system (soft and firm reserves)
+  - name: Users
+    description: User profile and payment method management
+  - name: Dashboard
+    description: Business owner dashboard and analytics
+  - name: Payments
+    description: Paystack payment processing with commission splits
+  - name: Chat
+    description: Real-time messaging via Socket.IO
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 6
+                phone:
+                  type: string
+                role:
+                  type: string
+                  enum: [user, business-owner]
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+                      token:
+                        type: string
+                      refreshToken:
+                        type: string
+
+  /auth/me:
+    get:
+      tags:
+        - Authentication
+      summary: Get current user
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Current user data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+
+  /auth/google:
+    get:
+      tags:
+        - Authentication
+      summary: Initiate Google OAuth authentication
+      description: |
+        Redirects to Google for authentication. Optionally specify user role for new account creation.
+        - Without role parameter: Creates regular user account
+        - With role=business_owner: Creates business owner account
+      parameters:
+        - name: role
+          in: query
+          description: Account type for new users (regular_user or business_owner)
+          required: false
+          schema:
+            type: string
+            enum: [regular_user, business_owner]
+            default: regular_user
+          example: business_owner
+      responses:
+        '302':
+          description: Redirect to Google OAuth consent screen
+          
+  /auth/google/callback:
+    get:
+      tags:
+        - Authentication
+      summary: Google OAuth callback handler
+      description: Google redirects here after user authentication. Returns JWT token.
+      parameters:
+        - name: code
+          in: query
+          description: Authorization code from Google
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: State parameter containing role information
+          required: false
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Redirect to frontend with token
+        '400':
+          description: OAuth error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cars:
+    get:
+      tags:
+        - Cars
+      summary: Get all cars with filters
+      parameters:
+        - name: make
+          in: query
+          schema:
+            type: string
+        - name: model
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: minPrice
+          in: query
+          schema:
+            type: number
+        - name: maxPrice
+          in: query
+          schema:
+            type: number
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: List of cars
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      cars:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Car'
+                      pagination:
+                        type: object
+
+    post:
+      tags:
+        - Cars
+      summary: Create new car
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - make
+                - model
+                - type
+                - year
+                - licensePlate
+                - rentalPricePerDay
+              properties:
+                make:
+                  type: string
+                model:
+                  type: string
+                type:
+                  type: string
+                year:
+                  type: integer
+                licensePlate:
+                  type: string
+                rentalPricePerDay:
+                  type: number
+      responses:
+        '201':
+          description: Car created successfully
+
+  /cars/{id}:
+    get:
+      tags:
+        - Cars
+      summary: Get car by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Car details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+
+    put:
+      tags:
+        - Cars
+      summary: Update car
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Car updated successfully
+
+    delete:
+      tags:
+        - Cars
+      summary: Delete car
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Car deleted successfully
+
+  /cars/{id}/images:
+    post:
+      tags:
+        - Cars
+      summary: Upload car images
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Images uploaded successfully
+
+  /reservations/soft-reserve:
+    post:
+      tags:
+        - Reservations
+      summary: Create soft reservation (guest)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - carId
+                - startDate
+                - endDate
+                - guestInfo
+              properties:
+                carId:
+                  type: string
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+                guestInfo:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    phone:
+                      type: string
+      responses:
+        '201':
+          description: Soft reservation created
+
+  /reservations/firm-reserve:
+    post:
+      tags:
+        - Reservations
+      summary: Create firm reservation (authenticated)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - carId
+                - startDate
+                - endDate
+              properties:
+                carId:
+                  type: string
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+      responses:
+        '201':
+          description: Firm reservation created
+
+  /reservations/convert-soft-reserve:
+    post:
+      tags:
+        - Reservations
+      summary: Convert soft reservation to firm
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reservationId
+              properties:
+                reservationId:
+                  type: string
+      responses:
+        '200':
+          description: Reservation converted successfully
+
+  /reservations/my-reservations:
+    get:
+      tags:
+        - Reservations
+      summary: Get user's reservations
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of user's reservations
+
+  /reservations/{id}:
+    put:
+      tags:
+        - Reservations
+      summary: Update reservation
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+      responses:
+        '200':
+          description: Reservation updated
+
+    delete:
+      tags:
+        - Reservations
+      summary: Cancel reservation
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Reservation cancelled
+
+  /users/profile:
+    get:
+      tags:
+        - Users
+      summary: Get user profile
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile
+
+    put:
+      tags:
+        - Users
+      summary: Update user profile
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                driverLicense:
+                  type: object
+      responses:
+        '200':
+          description: Profile updated
+
+  /users/payment-methods:
+    post:
+      tags:
+        - Users
+      summary: Add payment method
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                authorization_code:
+                  type: string
+      responses:
+        '200':
+          description: Payment method added
+
+  /users/payment-methods/{id}:
+    delete:
+      tags:
+        - Users
+      summary: Remove payment method
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment method removed
+
+  /dashboard/reservations:
+    get:
+      tags:
+        - Dashboard
+      summary: Get all reservations (business owner)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: carId
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of reservations
+
+    post:
+      tags:
+        - Dashboard
+      summary: Create reservation (bypass frontend)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                carId:
+                  type: string
+                userId:
+                  type: string
+                startDate:
+                  type: string
+                endDate:
+                  type: string
+      responses:
+        '201':
+          description: Reservation created
+
+  /dashboard/reservations/{id}/cancel:
+    put:
+      tags:
+        - Dashboard
+      summary: Cancel reservation (business owner)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Reservation cancelled
+
+  /dashboard/reservations/{id}/reassign:
+    put:
+      tags:
+        - Dashboard
+      summary: Reassign reservation to different car
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newCarId:
+                  type: string
+      responses:
+        '200':
+          description: Reservation reassigned
+
+  /dashboard/reports:
+    get:
+      tags:
+        - Dashboard
+      summary: Get revenue and booking reports
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Reports data
+
+  /payments/initialize:
+    post:
+      tags:
+        - Payments
+      summary: Initialize payment transaction
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reservationId:
+                  type: string
+                amount:
+                  type: number
+                type:
+                  type: string
+                  enum: [deposit, full-payment]
+      responses:
+        '200':
+          description: Payment initialized
+
+  /payments/verify/{reference}:
+    get:
+      tags:
+        - Payments
+      summary: Verify payment transaction
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: reference
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment verification result
+
+  /payments/webhook:
+    post:
+      tags:
+        - Payments
+      summary: Paystack webhook handler
+      description: Receives payment status updates from Paystack
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event:
+                  type: string
+                  example: charge.success
+                data:
+                  type: object
+      responses:
+        '200':
+          description: Webhook processed successfully
+
+  /chat/{reservationId}:
+    get:
+      tags:
+        - Chat
+      summary: Get or create chat for a reservation
+      description: Returns existing chat or creates new one for the reservation. User must be either renter or car owner.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: reservationId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Reservation ID to get/create chat for
+      responses:
+        '200':
+          description: Chat retrieved or created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Chat'
+        '403':
+          description: User is not a participant in this reservation
+        '404':
+          description: Reservation not found
+
+  /chat:
+    get:
+      tags:
+        - Chat
+      summary: Get all user chats
+      description: Returns all chats where the authenticated user is a participant
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of user chats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Chat'
+
+  /reservations/{id}/rate:
+    post:
+      tags:
+        - Reservations
+      summary: Rate a completed reservation
+      description: Add rating and review to a completed reservation
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - stars
+              properties:
+                stars:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  description: Rating from 1 to 5 stars
+                review:
+                  type: string
+                  description: Optional text review
+      responses:
+        '200':
+          description: Rating added successfully
+        '400':
+          description: Reservation not completed or already rated
+
+  /reservations/{id}/convert:
+    post:
+      tags:
+        - Reservations
+      summary: Convert soft reservation to firm
+      description: Converts a guest soft reservation to firm reservation after user registration
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Reservation converted successfully
+
+  /reservations/{id}/pickup:
+    post:
+      tags:
+        - Reservations
+      summary: Mark reservation as picked up
+      description: Business owner marks car as picked up by customer
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Marked as picked up
+
+  /reservations/{id}/return:
+    post:
+      tags:
+        - Reservations
+      summary: Mark reservation as returned
+      description: Business owner marks car as returned by customer
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Marked as returned
+
+  /cars/recommended:
+    get:
+      tags:
+        - Cars
+      summary: Get recommended cars
+      description: Returns popular cars and personalized recommendations based on user history
+      responses:
+        '200':
+          description: Recommended cars
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      popular:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Car'
+                        description: Most booked cars
+                      recommended:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Car'
+                        description: Cars matching user preferences
+                      preferredTypes:
+                        type: array
+                        items:
+                          type: string
+                        description: User's preferred car types
+
+  /users/payout:
+    post:
+      tags:
+        - Users
+      summary: Setup Paystack payout account
+      description: Business owners can setup bank account for receiving payments
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - businessName
+                - bankCode
+                - accountNumber
+              properties:
+                businessName:
+                  type: string
+                bankCode:
+                  type: string
+                  description: Nigerian bank code
+                accountNumber:
+                  type: string
+                  description: 10-digit account number
+      responses:
+        '200':
+          description: Payout account created successfully
+
+  /users/banks:
+    get:
+      tags:
+        - Users
+      summary: Get list of Nigerian banks
+      description: Returns list of banks for payout account setup
+      responses:
+        '200':
+          description: List of banks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        code:
+                          type: string
+
+  /dashboard/cars:
+    get:
+      tags:
+        - Dashboard
+      summary: Get business owner's cars
+      description: Returns all cars owned by the authenticated business owner
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of owned cars
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Car'
+
+  /dashboard/maintenance:
+    get:
+      tags:
+        - Dashboard
+      summary: Get maintenance alerts
+      description: Returns cars needing maintenance based on mileage/service intervals
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Maintenance alerts
+
+  /dashboard/reservations/{id}/reassign:
+    put:
+      tags:
+        - Dashboard
+      summary: Reassign reservation to different car
+      description: Business owner can move reservation to another available car
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - newCarId
+              properties:
+                newCarId:
+                  type: string
+                  description: ID of the new car to assign
+                reason:
+                  type: string
+                  description: Reason for reassignment
+      responses:
+        '200':
+          description: Reservation reassigned successfully
+        '400':
+          description: New car not available for selected dates
+
+  /auth/profile:
+    get:
+      tags:
+        - Authentication
+      summary: Get current user profile
+      description: Returns the authenticated user's profile information
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Not authenticated
+
+  /reservations/soft:
+    post:
+      tags:
+        - Reservations
+      summary: Create soft reservation (guest users)
+      description: |
+        Guest users can create a soft reservation without an account.
+        Soft reservations:
+        - Expire after 24 hours if not converted
+        - Can be overridden by firm reservations
+        - Require driver's license information
+        - Require guest contact information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - carId
+                - startDate
+                - endDate
+                - guestInfo
+                - driverLicense
+              properties:
+                carId:
+                  type: string
+                startDate:
+                  type: string
+                  format: date-time
+                endDate:
+                  type: string
+                  format: date-time
+                startTime:
+                  type: string
+                  pattern: '^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
+                  example: '10:00'
+                endTime:
+                  type: string
+                  pattern: '^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
+                  example: '18:00'
+                guestInfo:
+                  type: object
+                  required: [email, phone]
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                    phone:
+                      type: string
+                driverLicense:
+                  type: object
+                  required: [number, expiryDate]
+                  properties:
+                    number:
+                      type: string
+                    expiryDate:
+                      type: string
+                      format: date
+      responses:
+        '201':
+          description: Soft reservation created successfully
+        '400':
+          description: Invalid data or car not available
+        '409':
+          description: Dates conflict with existing firm reservation
+
+  /reservations/firm:
+    post:
+      tags:
+        - Reservations
+      summary: Create firm reservation (authenticated users)
+      description: |
+        Authenticated users create firm reservations that:
+        - Override soft reservations
+        - Require user to have driver's license in profile
+        - Cannot overlap with other firm reservations
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - carId
+                - startDate
+                - endDate
+              properties:
+                carId:
+                  type: string
+                startDate:
+                  type: string
+                  format: date-time
+                endDate:
+                  type: string
+                  format: date-time
+                startTime:
+                  type: string
+                  example: '10:00'
+                endTime:
+                  type: string
+                  example: '18:00'
+      responses:
+        '201':
+          description: Firm reservation created successfully
+        '400':
+          description: Missing driver's license or invalid dates
+        '409':
+          description: Car already reserved for selected dates
+
+  /reservations/my:
+    get:
+      tags:
+        - Reservations
+      summary: Get user's reservations
+      description: Returns all reservations for the authenticated user
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of user reservations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Reservation'
+

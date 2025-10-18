@@ -1,10 +1,11 @@
 import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { config } from '../config/env';
-import { AuthRequest, UserRole } from '../types';
-import { UnauthorizedError, ForbiddenError } from '../utils/errors';
-import { ERROR_MESSAGES } from '../utils/constants';
-import User from '../models/User';
+import { Types } from "mongoose";
+import { config } from "../config/env";
+import { AuthRequest, UserRole } from "../types";
+import { UnauthorizedError, ForbiddenError } from "../utils/errors";
+import { ERROR_MESSAGES } from "../utils/constants";
+import User from "../models/User";
 
 interface JwtPayload {
   id: string;
@@ -24,11 +25,11 @@ export const authenticate = async (
     // Get token from header
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       throw new UnauthorizedError(ERROR_MESSAGES.UNAUTHORIZED);
     }
 
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(" ")[1];
 
     // Verify token
     const decoded = jwt.verify(token, config.JWT_SECRET) as JwtPayload;
@@ -41,6 +42,7 @@ export const authenticate = async (
 
     // Attach user to request
     req.user = {
+      _id: new Types.ObjectId(decoded.id),
       id: decoded.id,
       email: decoded.email,
       role: decoded.role,
@@ -84,11 +86,12 @@ export const optionalAuthenticate = async (
   try {
     const authHeader = req.headers.authorization;
 
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.split(" ")[1];
       const decoded = jwt.verify(token, config.JWT_SECRET) as JwtPayload;
 
       req.user = {
+        _id: new Types.ObjectId(decoded.id),
         id: decoded.id,
         email: decoded.email,
         role: decoded.role,

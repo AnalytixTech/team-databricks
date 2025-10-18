@@ -39,11 +39,30 @@ export const datesOverlap = (
 
 /**
  * Calculate number of days between two dates
+ * If less than 24 hours, returns 1 day (minimum charge)
+ * If more than 1 day, rounds up to the nearest whole day
  */
-export const calculateDays = (startDate: Date, endDate: Date): number => {
-  const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays;
+export const calculateDays = (startDate: Date, endDate: Date, startTime?: string, endTime?: string): number => {
+  let start = new Date(startDate);
+  let end = new Date(endDate);
+  
+  // If time is provided, incorporate it into the date
+  if (startTime) {
+    const [hours, minutes] = startTime.split(':').map(Number);
+    start.setHours(hours, minutes, 0, 0);
+  }
+  
+  if (endTime) {
+    const [hours, minutes] = endTime.split(':').map(Number);
+    end.setHours(hours, minutes, 0, 0);
+  }
+  
+  const diffTime = Math.abs(end.getTime() - start.getTime());
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+  
+  // If less than 1 day, charge for 1 day minimum
+  // If more than 1 day, round up to nearest whole day
+  return Math.max(1, Math.ceil(diffDays));
 };
 
 /**

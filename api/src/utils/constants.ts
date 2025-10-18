@@ -85,3 +85,33 @@ export const RATE_LIMIT = {
   MAX_REQUESTS: 100,
 } as const;
 
+// Enums
+export enum UserRole {
+  REGULAR_USER = 'regular_user',
+  BUSINESS_OWNER = 'business_owner',
+  ADMIN = 'admin',
+}
+
+export enum ReservationStatus {
+  PENDING = 'pending',
+  CONFIRMED = 'confirmed',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+  OVERRIDDEN = 'overridden',
+}
+
+export enum PaymentStatus {
+  PENDING = 'pending',
+  SUCCESS = 'success',
+  FAILED = 'failed',
+  REFUNDED = 'refunded',
+  DEPOSIT_PAID = 'deposit_paid',
+  FULLY_PAID = 'fully_paid',
+}
+
+export enum PaymentType {
+  DEPOSIT = 'deposit',
+  FULL_PAYMENT = 'full_payment',
+  BALANCE = 'balance',
+}
+

@@ -34,7 +34,7 @@ const UserSchema = new Schema<IUser>(
       businessName: {
         type: String,
         required: function(this: any) {
-          return this.role === 'business-owner';
+          return this.role === UserRole.BUSINESS_OWNER;
         },
       },
       paystackSubaccountCode: {
