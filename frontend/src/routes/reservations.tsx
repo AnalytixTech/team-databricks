@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import MyReservations from '@/pages/MyReservations.tsx';
+import MyReservations from '@/pages/MyReservations';
 
 export const Route = createFileRoute('/reservations')({
   beforeLoad: ({ context }) => {

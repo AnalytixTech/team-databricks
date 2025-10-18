@@ -1,4 +1,4 @@
-import Layout from '@/components/layout/Layout.tsx';
+import Layout from '@/components/layout/Layout';
 import { Users, Shield, Zap, Heart, Target, Award } from 'lucide-react';
 
 export default function About() {

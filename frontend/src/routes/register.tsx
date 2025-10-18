@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import Register from '@/pages/Register.tsx';
+import Register from '@/pages/Register';
 import { UserRole } from '@/types';
 
 export const Route = createFileRoute('/register')({

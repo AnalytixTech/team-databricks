@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import Layout from '@/components/layout/Layout.tsx';
+import Layout from '@/components/layout/Layout';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
-import Button from '@/components/ui/Button.tsx';
-import Input from '@/components/ui/Input.tsx';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
 import toast from 'react-hot-toast';
 
 export default function Contact() {

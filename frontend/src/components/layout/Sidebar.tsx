@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import { UserRole } from '@/types';
-import Button from '@/components/ui/Button.tsx';
+import Button from '@/components/ui/Button';
 
 export default function Sidebar() {
   const { user } = useAuthStore();

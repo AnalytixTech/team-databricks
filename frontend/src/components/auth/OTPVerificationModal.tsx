@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Mail, RefreshCw } from 'lucide-react';
-import Modal from '@/components/ui/Modal.tsx';
-import Button from '@/components/ui/Button.tsx';
-import OTPInput from './OTPInput.tsx';
+import Modal from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
+import OTPInput from './OTPInput';
 
 interface OTPVerificationModalProps {
   isOpen: boolean;

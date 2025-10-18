@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import PaymentVerify from '@/pages/PaymentVerify.tsx';
+import PaymentVerify from '@/pages/PaymentVerify';
 
 export const Route = createFileRoute('/payment-verify')({
   beforeLoad: ({ context }) => {

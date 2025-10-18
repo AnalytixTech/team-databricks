@@ -1,10 +1,10 @@
 import { Link } from '@tanstack/react-router';
 import { Car, Shield, CreditCard, ArrowRight, Search, Calendar, Key, Settings, Tag, TrendingUp } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import Button from '@/components/ui/Button.tsx';
-import { Card, CardContent } from '@/components/ui/Card.tsx';
-import Rating from '@/components/ui/Rating.tsx';
-import Layout from '@/components/layout/Layout.tsx';
+import Button from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import Rating from '@/components/ui/Rating';
+import Layout from '@/components/layout/Layout';
 import { carService } from '@/services/car.service';
 import { ICar } from '@/types';
 import { formatCurrency } from '@/lib/utils';

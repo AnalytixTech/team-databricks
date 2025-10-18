@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import toast from 'react-hot-toast';
 import { CheckCircle, XCircle, Loader, ArrowRight, Receipt } from 'lucide-react';
-import Layout from '@/components/layout/Layout.tsx';
-import { Card, CardContent } from '@/components/ui/Card.tsx';
-import Button from '@/components/ui/Button.tsx';
+import Layout from '@/components/layout/Layout';
+import { Card, CardContent } from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
 import { paymentService } from '@/services/payment.service';
 
 export default function PaymentVerify() {
