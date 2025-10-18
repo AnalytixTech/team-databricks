@@ -16,7 +16,6 @@ export default function AuthCallback() {
   };
   const { setUser, setToken } = useAuthStore();
   const [showBusinessNameModal, setShowBusinessNameModal] = useState(false);
-  const [userRole, setUserRole] = useState<UserRole | null>(null);
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -30,7 +29,6 @@ export default function AuthCallback() {
           // Fetch user data
           const user = await authService.getCurrentUser();
           setUser(user);
-          setUserRole(user.role);
 
           // Check if business owner needs to provide business name
           if (search.needsBusinessName === 'true' && user.role === UserRole.BUSINESS_OWNER) {

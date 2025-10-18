@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { User, Phone, CreditCard, FileText, Save, Lock } from 'lucide-react';
+import { User, CreditCard, FileText, Save, Lock } from 'lucide-react';
 import SidebarLayout from '@/components/layout/SidebarLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -11,7 +11,6 @@ import Spinner from '@/components/ui/Spinner';
 import { userService } from '@/services/user.service';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
-import { IUser } from '@/types';
 
 interface ProfileForm {
   phone: string;
