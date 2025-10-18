@@ -13,8 +13,8 @@
     "clean": "rm -rf dist node_modules/.vite"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.77.1",
