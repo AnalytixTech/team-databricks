@@ -3,6 +3,7 @@ import authRoutes from './auth.routes';
 import carRoutes from "./car.routes";
 import paymentRoutes from "./payment.routes";
 import chatRoutes from "./chat.routes";
+import userRoutes from './user.routes';
 
 const router = Router();
 
@@ -11,6 +12,7 @@ router.use('/auth', authRoutes);
 router.use('/cars', carRoutes);
 router.use("/payments", paymentRoutes);
 router.use("/chat", chatRoutes);
+router.use('/users', userRoutes)
 
 
 // Health check
