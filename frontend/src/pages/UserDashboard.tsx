@@ -19,7 +19,7 @@ import Badge from '@/components/ui/Badge';
 import Spinner from '@/components/ui/Spinner';
 import { reservationService } from '@/services/reservation.service';
 import { IReservation, ICar, ReservationStatus, PaymentStatus } from '@/types';
-import { formatCurrency, calculateDays } from '@/lib/utils';
+import { formatCurrency } from '@/lib/utils';
 
 interface DashboardStats {
   totalBookings: number;

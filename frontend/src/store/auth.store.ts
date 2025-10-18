@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { IUser } from '@/types';
-import { authService } from '@/services/auth.service';
+import { IUser, AuthResponse } from "@/types";
+import { authService } from "@/services/auth.service";
 
 interface AuthState {
   user: IUser | null;
@@ -10,7 +10,7 @@ interface AuthState {
   setUser: (user: IUser | null) => void;
   setToken: (token: string | null) => void;
   login: (email: string, password: string) => Promise<void>;
-  register: (data: any) => Promise<void>;
+  register: (data: any) => Promise<AuthResponse>;
   logout: () => void;
   checkAuth: () => Promise<void>;
 }

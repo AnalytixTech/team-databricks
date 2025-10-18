@@ -1,8 +1,9 @@
 import axios from '@/lib/axios';
-import { IUser, IPaymentMethod, ApiResponse } from '@/types';
+import { IUser, ApiResponse } from "@/types";
 
 interface UpdateProfileData {
   phone?: string;
+  businessName?: string;
   driverLicense?: {
     number: string;
     expiryDate: string;

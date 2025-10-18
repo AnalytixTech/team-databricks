@@ -202,6 +202,8 @@ export interface TopCar {
   make?: string;
   model?: string;
   revenue: number;
+  totalRevenue: number;
+  bookingCount: number;
 }
 
 export interface StatusCount {
