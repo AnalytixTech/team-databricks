@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Car, Shield, Clock, Award, CheckCircle, Star, MapPin, Users, DollarSign } from 'lucide-react';
-import Button from '@/components/ui/Button';
-import LoginModal from '@/components/auth/LoginModal';
-import RegisterModal from '@/components/auth/RegisterModal';
-import ForgotPasswordModal from '@/components/auth/ForgotPasswordModal';
+import Button from '@/components/ui/Button.tsx';
+import LoginModal from '@/components/auth/LoginModal.tsx';
+import RegisterModal from '@/components/auth/RegisterModal.tsx';
+import ForgotPasswordModal from '@/components/auth/ForgotPasswordModal.tsx';
 import { UserRole } from '@/types';
 
 export default function Onboarding() {

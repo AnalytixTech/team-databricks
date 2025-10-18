@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Send, Loader, X } from 'lucide-react';
 import { io, Socket } from 'socket.io-client';
 import toast from 'react-hot-toast';
-import Button from './Button';
+import Button from './Button.tsx';
 import { useAuthStore } from '@/store/auth.store';
 import { chatService } from '@/services/chat.service';
 import { format } from 'date-fns';

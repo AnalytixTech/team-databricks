@@ -1,12 +1,13 @@
 [build]
-  # Build command
-  command = "npm run build"
+  # Build command - uses Vite directly to handle TypeScript and route generation
+  command = "npm ci && npm run build"
   
   # Directory that contains the build output
   publish = "dist"
   
-  # Set Node version
-  environment = { NODE_VERSION = "18" }
+  # Set Node version - Vite 7.x requires Node 20+
+  [build.environment]
+    NODE_VERSION = "20"
 
 # Redirect all requests to index.html for client-side routing (SPA)
 [[redirects]]

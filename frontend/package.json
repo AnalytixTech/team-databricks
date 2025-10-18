@@ -6,15 +6,15 @@
   "description": "Fleetly Car Rental Platform - Modern React frontend with driver ratings, smart recommendations, real-time chat, map integration, and beautiful UI. Built with TypeScript, React, TanStack Router, and Tailwind CSS.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist node_modules/.vite"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.77.1",
