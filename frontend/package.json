@@ -1,0 +1,77 @@
+{
+  "name": "fleetly-frontend",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Fleetly Car Rental Platform - Modern React frontend with driver ratings, smart recommendations, real-time chat, map integration, and beautiful UI. Built with TypeScript, React, TanStack Router, and Tailwind CSS.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules/.vite"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "^1.77.1",
+    "axios": "^1.7.7",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "jspdf": "^2.5.2",
+    "lucide-react": "^0.454.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.53.0",
+    "react-hot-toast": "^2.4.1",
+    "socket.io-client": "^4.8.1",
+    "tailwind-merge": "^2.5.4",
+    "zustand": "^5.0.1"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.2.0",
+    "@tanstack/router-devtools": "^1.77.1",
+    "@tanstack/router-plugin": "^1.77.0",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/supertest": "^6.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/parser": "^8.15.0",
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.15.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "jest": "^30.2.0",
+    "mongodb-memory-server": "^10.2.3",
+    "postcss": "^8.4.49",
+    "supertest": "^7.1.4",
+    "tailwindcss": "^3.4.15",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  },
+  "keywords": [
+    "car-rental",
+    "react",
+    "typescript",
+    "tanstack-router",
+    "tailwindcss",
+    "vite",
+    "ratings",
+    "recommendations",
+    "socketio-client",
+    "realtime-chat",
+    "openstreetmap"
+  ],
+  "author": "Fleetly Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fleetly-team/fleetly-frontend"
+  }
+}
