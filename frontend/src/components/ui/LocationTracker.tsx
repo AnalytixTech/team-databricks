@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { MapPin, Loader2 } from 'lucide-react';
-import Button from './Button';
-import Map from './Map';
+import Button from './Button.tsx';
+import Map from './Map.tsx';
 import toast from 'react-hot-toast';
 
 interface LocationData {

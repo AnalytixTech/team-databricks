@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Building2, Loader } from 'lucide-react';
-import Modal from '@/components/ui/Modal';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
+import Modal from '@/components/ui/Modal.tsx';
+import Button from '@/components/ui/Button.tsx';
+import Input from '@/components/ui/Input.tsx';
 import { userService } from '@/services/user.service';
 
 interface BusinessNameForm {

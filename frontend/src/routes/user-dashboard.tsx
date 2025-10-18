@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import UserDashboard from '@/pages/UserDashboard';
+import UserDashboard from '@/pages/UserDashboard.tsx';
 import { UserRole } from '@/types';
 
 export const Route = createFileRoute('/user-dashboard')({

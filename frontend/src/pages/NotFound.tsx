@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
-import Layout from '@/components/layout/Layout';
+import Layout from '@/components/layout/Layout.tsx';
 import { Home, Search, Car } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/Button.tsx';
 
 export default function NotFound() {
   return (

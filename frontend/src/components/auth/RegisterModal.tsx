@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from '@tanstack/react-router';
 import toast from 'react-hot-toast';
-import Modal from '@/components/ui/Modal';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import Select from '@/components/ui/Select';
-import OTPVerificationModal from './OTPVerificationModal';
+import Modal from '@/components/ui/Modal.tsx';
+import Button from '@/components/ui/Button.tsx';
+import Input from '@/components/ui/Input.tsx';
+import Select from '@/components/ui/Select.tsx';
+import OTPVerificationModal from './OTPVerificationModal.tsx';
 import { UserRole } from '@/types';
 import { authService } from '@/services/auth.service';
 

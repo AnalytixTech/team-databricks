@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from '@tanstack/react-router';
 import toast from 'react-hot-toast';
-import Modal from '@/components/ui/Modal';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
+import Modal from '@/components/ui/Modal.tsx';
+import Button from '@/components/ui/Button.tsx';
+import Input from '@/components/ui/Input.tsx';
 import { useAuthStore } from '@/store/auth.store';
 import { UserRole } from '@/types';
 

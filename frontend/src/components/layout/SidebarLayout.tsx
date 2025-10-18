@@ -1,8 +1,8 @@
 import { ReactNode, useState, useEffect } from 'react';
-import Header from './Header';
-import Footer from './Footer';
-import Sidebar from './Sidebar';
-import BottomNav from './BottomNav';
+import Header from './Header.tsx';
+import Footer from './Footer.tsx';
+import Sidebar from './Sidebar.tsx';
+import BottomNav from './BottomNav.tsx';
 import { useAuthStore } from '@/store/auth.store';
 
 interface SidebarLayoutProps {
