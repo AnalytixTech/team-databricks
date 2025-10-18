@@ -16,16 +16,16 @@ import {
   MapPin,
   MessageCircle,
 } from 'lucide-react';
-import SidebarLayout from '@/components/layout/SidebarLayout.tsx';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card.tsx';
-import Button from '@/components/ui/Button.tsx';
-import Badge from '@/components/ui/Badge.tsx';
-import Spinner from '@/components/ui/Spinner.tsx';
-import Modal from '@/components/ui/Modal.tsx';
-import Input from '@/components/ui/Input.tsx';
-import Select from '@/components/ui/Select.tsx';
-import LocationTracker from '@/components/ui/LocationTracker.tsx';
-import ChatWindow from '@/components/ui/ChatWindow.tsx';
+import SidebarLayout from '@/components/layout/SidebarLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import Badge from '@/components/ui/Badge';
+import Spinner from '@/components/ui/Spinner';
+import Modal from '@/components/ui/Modal';
+import Input from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
+import LocationTracker from '@/components/ui/LocationTracker';
+import ChatWindow from '@/components/ui/ChatWindow';
 import { carService } from '@/services/car.service';
 import { dashboardService } from '@/services/dashboard.service';
 import { ICar, IReservation, CarType, DetailedReport, ReservationStatus, PaymentStatus } from '@/types';

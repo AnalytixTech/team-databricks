@@ -5,7 +5,7 @@ import { Loader } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import { authService } from '@/services/auth.service';
 import { UserRole } from '@/types';
-import BusinessNameModal from '@/components/auth/BusinessNameModal.tsx';
+import BusinessNameModal from '@/components/auth/BusinessNameModal';
 
 export default function AuthCallback() {
   const navigate = useNavigate();

@@ -1,4 +1,4 @@
-import Layout from '@/components/layout/Layout.tsx';
+import Layout from '@/components/layout/Layout';
 import { Shield } from 'lucide-react';
 
 export default function Privacy() {

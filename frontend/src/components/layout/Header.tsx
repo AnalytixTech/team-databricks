@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { Menu, X, User, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { useAuthStore } from '@/store/auth.store';
-import Button from '@/components/ui/Button.tsx';
+import Button from '@/components/ui/Button';
 import { UserRole } from '@/types';
 
 export default function Header() {

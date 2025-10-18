@@ -12,11 +12,11 @@ import {
   Package,
   Car as CarIcon,
 } from 'lucide-react';
-import SidebarLayout from '@/components/layout/SidebarLayout.tsx';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card.tsx';
-import Button from '@/components/ui/Button.tsx';
-import Badge from '@/components/ui/Badge.tsx';
-import Spinner from '@/components/ui/Spinner.tsx';
+import SidebarLayout from '@/components/layout/SidebarLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import Badge from '@/components/ui/Badge';
+import Spinner from '@/components/ui/Spinner';
 import { reservationService } from '@/services/reservation.service';
 import { IReservation, ICar, ReservationStatus, PaymentStatus } from '@/types';
 import { formatCurrency } from '@/lib/utils';

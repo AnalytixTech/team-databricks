@@ -1,4 +1,4 @@
-import Layout from '@/components/layout/Layout.tsx';
+import Layout from '@/components/layout/Layout';
 import { FileText } from 'lucide-react';
 
 export default function Terms() {
