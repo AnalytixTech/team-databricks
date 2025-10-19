@@ -9,6 +9,7 @@ import Select from '@/components/ui/Select';
 import OTPVerificationModal from './OTPVerificationModal';
 import { UserRole } from '@/types';
 import { authService } from '@/services/auth.service';
+import { useAuthStore } from '@/store/auth.store';
 
 interface RegisterForm {
   email: string;
@@ -33,6 +34,7 @@ export default function RegisterModal({
   defaultRole = UserRole.USER,
 }: RegisterModalProps) {
   const navigate = useNavigate();
+  const { setUser, setToken } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [registrationData, setRegistrationData] = useState<RegisterForm | null>(null);
@@ -83,7 +85,7 @@ export default function RegisterModal({
 
     const { confirmPassword, ...regData } = registrationData;
     
-    await authService.verifyOTPAndRegister(
+    const response = await authService.verifyOTPAndRegister(
       regData.email,
       code,
       regData.password,
@@ -91,6 +93,13 @@ export default function RegisterModal({
       regData.phone,
       regData.businessName
     );
+
+    // Update auth store with user data
+    if (response.user) {
+      setUser(response.user);
+      setToken(response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+    }
 
     toast.success('Registration successful! Welcome to Fleetly! 🎉');
     

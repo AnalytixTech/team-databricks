@@ -90,10 +90,6 @@ passport.use(
             // This avoids validation errors on Google OAuth registration
             user = await User.create(userData);
 
-            // Mark as new user for business owners (to prompt for business name)
-            (user as any).isNewBusinessOwner =
-              userRole === UserRole.BUSINESS_OWNER;
-
             // Convert any soft reservations to firm reservations for new Google users
             try {
               const softReservations = await Reservation.find({
@@ -130,11 +126,16 @@ passport.use(
         }
 
         // Convert mongoose document to Express.User
+        // Check if business owner needs to provide business name
+        const isNewBusinessOwner =
+          user.role === UserRole.BUSINESS_OWNER && !user.profile?.businessName;
+
         const expressUser: Express.User = {
           _id: user._id as Types.ObjectId,
           id: (user._id as Types.ObjectId).toString(),
           email: user.email,
           role: user.role,
+          isNewBusinessOwner: isNewBusinessOwner,
         };
 
         return done(null, expressUser);

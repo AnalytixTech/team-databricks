@@ -28,6 +28,7 @@ export default function AuthCallback() {
 
           // Fetch user data
           const user = await authService.getCurrentUser();
+          localStorage.setItem('user', JSON.stringify(user));
           setUser(user);
 
           // Check if business owner needs to provide business name
@@ -64,6 +65,7 @@ export default function AuthCallback() {
     // Refresh user data to get updated business name
     try {
       const user = await authService.getCurrentUser();
+      localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
       
       toast.success('Welcome to Fleetly! Your account is now complete. 🎉');
