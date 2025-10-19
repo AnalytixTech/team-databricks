@@ -281,6 +281,8 @@ export default function MyReservations() {
             <div className="space-y-6">
               {reservations.map((reservation) => {
                 const car = reservation.carId as ICar;
+                if (!car) return null;
+                
                 const days = calculateDays(reservation.startDate, reservation.endDate);
 
                 return (

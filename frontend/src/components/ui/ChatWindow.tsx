@@ -79,7 +79,10 @@ export default function ChatWindow({ reservationId, otherParticipantName, onClos
     socket.on('chat-history', (history: Message[]) => {
       console.log('📜 Chat history received:', history.length, 'messages');
       setMessages(history);
-      scrollToBottom();
+      // Scroll to bottom after messages are rendered
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+      }, 100);
     });
 
     socket.on('new-message', (message: Message) => {
@@ -118,6 +121,15 @@ export default function ChatWindow({ reservationId, otherParticipantName, onClos
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (messages.length > 0 && !isConnecting) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+      }, 100);
+    }
+  }, [messages.length, isConnecting]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
