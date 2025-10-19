@@ -33,8 +33,21 @@ const UserSchema = new Schema<IUser>(
     profile: {
       businessName: {
         type: String,
-        required: function(this: any) {
-          return this.role === UserRole.BUSINESS_OWNER;
+        // Validate that business owners eventually have a business name
+        // but allow undefined/null for initial OAuth registration
+        validate: {
+          validator: function(this: any, value: string) {
+            // Allow undefined/null for OAuth users who will set it later
+            if (this.role === UserRole.BUSINESS_OWNER && this.googleId) {
+              return true; // Allow OAuth business owners to have no business name initially
+            }
+            // For non-OAuth business owners, require business name
+            if (this.role === UserRole.BUSINESS_OWNER && !value) {
+              return false;
+            }
+            return true;
+          },
+          message: 'Business name is required for business owner registration',
         },
       },
       paystackSubaccountCode: {

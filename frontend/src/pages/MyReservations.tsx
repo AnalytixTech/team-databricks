@@ -256,10 +256,10 @@ export default function MyReservations() {
   return (
     <SidebarLayout>
       <div className="bg-gray-50">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">My Reservations</h1>
-            <p className="mt-2 text-gray-600">Manage your car rental bookings</p>
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 md:py-16 sm:px-6 lg:px-8">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">My Reservations</h1>
+            <p className="mt-1 sm:mt-2 text-sm sm:text-base text-gray-600">Manage your car rental bookings</p>
           </div>
 
           {reservations.length === 0 ? (

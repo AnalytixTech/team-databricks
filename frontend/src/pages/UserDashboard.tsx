@@ -141,11 +141,11 @@ export default function UserDashboard() {
   return (
     <SidebarLayout>
       <div className="bg-gray-50 min-h-screen">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:py-8 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">My Dashboard</h1>
-            <p className="mt-2 text-gray-600">Overview of your rental activity</p>
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">My Dashboard</h1>
+            <p className="mt-1 sm:mt-2 text-sm sm:text-base text-gray-600">Overview of your rental activity</p>
           </div>
 
           {/* Stats Grid */}
@@ -391,25 +391,25 @@ export default function UserDashboard() {
                     return (
                       <div
                         key={reservation._id}
-                        className="flex items-center justify-between border-b border-gray-200 pb-3 last:border-0 last:pb-0"
+                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 pb-3 last:border-0 last:pb-0 gap-3"
                       >
-                        <div className="flex items-center gap-4">
-                          <div className="h-16 w-16 overflow-hidden rounded-lg bg-gray-100">
+                        <div className="flex items-start gap-3 sm:gap-4 flex-1">
+                          <div className="h-14 w-14 sm:h-16 sm:w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
                             <img
                               src={car.images[0] || '/Frame 2147226662.svg'}
                               alt={`${car.make} ${car.model}`}
                               className="h-full w-full object-cover"
                             />
                           </div>
-                          <div>
-                            <p className="font-semibold text-gray-900">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-sm sm:text-base text-gray-900 truncate">
                               {car.make} {car.model}
                             </p>
-                            <p className="text-sm text-gray-600">
+                            <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
                               {format(new Date(reservation.startDate), 'MMM dd')} -{' '}
                               {format(new Date(reservation.endDate), 'MMM dd, yyyy')}
                             </p>
-                            <div className="flex items-center gap-2 mt-1">
+                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1.5">
                               <Badge
                                 variant={
                                   reservation.status === ReservationStatus.CONFIRMED
@@ -433,12 +433,12 @@ export default function UserDashboard() {
                             </div>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-semibold text-gray-900">
+                        <div className="text-left sm:text-right flex-shrink-0 pl-16 sm:pl-0">
+                          <p className="font-semibold text-sm sm:text-base text-gray-900">
                             {formatCurrency(reservation.totalPrice)}
                           </p>
                           {reservation.paymentStatus !== PaymentStatus.FULLY_PAID && (
-                            <p className="text-sm text-orange-600 mt-1">
+                            <p className="text-xs sm:text-sm text-orange-600 mt-1">
                               Owing: {formatCurrency(reservation.totalPrice - (reservation.depositPaid || 0))}
                             </p>
                           )}
@@ -481,16 +481,18 @@ function StatCard({ icon, title, value, color, subtitle }: StatCardProps) {
 
   return (
     <Card>
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-5 md:p-6">
         <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-gray-600">{title}</p>
-            <p className="mt-2 text-2xl font-bold text-gray-900">{value}</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs sm:text-sm text-gray-600 truncate">{title}</p>
+            <p className="mt-1 sm:mt-2 text-lg sm:text-xl md:text-2xl font-bold text-gray-900">{value}</p>
             {subtitle && (
-              <p className="mt-1 text-xs text-gray-500">{subtitle}</p>
+              <p className="mt-0.5 sm:mt-1 text-xs text-gray-500">{subtitle}</p>
             )}
           </div>
-          <div className={`rounded-lg p-3 ${colors[color]}`}>{icon}</div>
+          <div className={`rounded-lg p-2 sm:p-2.5 md:p-3 flex-shrink-0 ${colors[color]}`}>
+            <div className="w-5 h-5 sm:w-6 sm:h-6">{icon}</div>
+          </div>
         </div>
       </CardContent>
     </Card>

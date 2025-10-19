@@ -22,7 +22,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-gray-700 bg-[#272727]/95 backdrop-blur supports-[backdrop-filter]:bg-[#272727]/90">
+    <header className="sticky top-0 z-40 w-full border-b border-gray-200 bg-gray-100/95 backdrop-blur supports-[backdrop-filter]:bg-gray-100/90">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8">
         {/* Logo */}
         <div className="flex lg:flex-1">
@@ -35,7 +35,7 @@ export default function Header() {
         <div className="flex lg:hidden">
           <button
             type="button"
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-300 hover:text-white"
+            className="inline-flex items-center justify-center rounded-md p-4 text-gray-700 hover:text-gray-900"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <span className="sr-only">Open main menu</span>
@@ -53,7 +53,7 @@ export default function Header() {
           {(!isAuthenticated || user?.role !== UserRole.BUSINESS_OWNER) && (
             <Link
               to="/cars"
-              className="text-sm font-semibold leading-6 text-gray-300 hover:text-white transition-colors"
+              className="text-sm font-semibold leading-6 text-gray-700 hover:text-gray-900 transition-colors"
             >
               Browse Cars
             </Link>
@@ -66,7 +66,7 @@ export default function Header() {
             <>
               <Link
                 to="/profile"
-                className="flex items-center gap-x-2 text-sm font-semibold leading-6 text-gray-300 hover:text-white transition-colors"
+                className="flex items-center gap-x-2 text-sm font-semibold leading-6 text-gray-700 hover:text-gray-900 transition-colors"
               >
                 <User className="h-5 w-5" />
                 {user?.email}
@@ -75,7 +75,7 @@ export default function Header() {
                 variant="outline" 
                 size="sm" 
                 onClick={handleLogout}
-                className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                className="border-gray-300 text-gray-700 hover:bg-gray-200 hover:text-gray-900"
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
@@ -87,13 +87,13 @@ export default function Header() {
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white"
+                  className="text-gray-700 hover:bg-gray-200 hover:text-gray-900"
                 >
                   Log in
                 </Button>
               </Link>
               <Link to="/register">
-                <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                <Button size="sm" className="bg-primary-600 hover:bg-primary-700">
                   Sign up
                 </Button>
               </Link>
@@ -104,13 +104,13 @@ export default function Header() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-gray-700 bg-gray-800">
-          <div className="space-y-2 px-4 pb-3 pt-2">
+        <div className="lg:hidden border-t border-gray-200 bg-white shadow-lg">
+          <div className="space-y-1 px-4 pb-4 pt-3">
             {/* Only show Browse Cars to non-authenticated users and regular users */}
             {(!isAuthenticated || user?.role !== UserRole.BUSINESS_OWNER) && (
               <Link
                 to="/cars"
-                className="block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-300 hover:bg-gray-700 hover:text-white"
+                className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors text-center"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Browse Cars
@@ -121,7 +121,7 @@ export default function Header() {
               <>
                 <Link
                   to="/profile"
-                  className="flex items-center gap-x-2 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-300 hover:bg-gray-700 hover:text-white"
+                  className="flex items-center justify-center gap-x-2 rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <User className="h-5 w-5" />
@@ -132,7 +132,7 @@ export default function Header() {
                     setMobileMenuOpen(false);
                     handleLogout();
                   }}
-                  className="flex w-full items-center gap-x-2 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-300 hover:bg-gray-700 hover:text-white"
+                  className="flex w-full items-center justify-center gap-x-2 rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
                 >
                   <LogOut className="h-5 w-5" />
                   Logout
@@ -142,17 +142,17 @@ export default function Header() {
               <>
                 <Link
                   to="/login"
-                  className="block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-300 hover:bg-gray-700 hover:text-white"
+                  className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors text-center"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Log in
                 </Link>
                 <Link
                   to="/register"
-                  className="block rounded-lg bg-blue-600 px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-blue-700"
+                  className="block rounded-lg bg-primary-600 px-3 py-2.5 text-center text-base font-semibold text-white hover:bg-primary-700 transition-colors mt-2"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Sign up
+                  Get Started
                 </Link>
               </>
             )}

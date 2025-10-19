@@ -167,13 +167,13 @@ export default function Cars() {
   return (
     <SidebarLayout>
       <div className="bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 md:py-16 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
               Find Your Perfect Car
             </h1>
-            <p className="mt-4 text-lg text-gray-600">
+            <p className="mt-2 sm:mt-3 md:mt-4 text-sm sm:text-base md:text-lg text-gray-600">
               Choose from our wide selection of quality vehicles
             </p>
           </div>
@@ -617,23 +617,23 @@ function CarCard({ car, onBook, onViewDetails }: CarCardProps) {
           }`}
         />
       </div>
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900">
+      <CardContent className="p-4 sm:p-5 md:p-6">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 truncate">
               {car.make} {car.model}
             </h3>
-            <p className="mt-1 text-sm text-gray-600">
+            <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-gray-600">
               {car.year} · {car.type.charAt(0).toUpperCase() + car.type.slice(1)}
             </p>
             {car.averageRating && car.averageRating > 0 && (
-              <div className="mt-2 flex items-center gap-1">
+              <div className="mt-1.5 sm:mt-2 flex items-center gap-1">
                 <Rating value={Math.round(car.averageRating)} readonly size="sm" showCount count={car.ratingCount} />
               </div>
             )}
           </div>
           <span
-            className={`rounded-full px-3 py-1 text-xs font-medium ${
+            className={`flex-shrink-0 rounded-full px-2 sm:px-3 py-1 text-xs font-medium ${
               car.availability.status === 'available'
                 ? 'bg-green-100 text-green-800'
                 : 'bg-red-100 text-red-800'
@@ -643,16 +643,17 @@ function CarCard({ car, onBook, onViewDetails }: CarCardProps) {
           </span>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-3 sm:mt-4 flex items-center justify-between">
           <div>
-            <p className="text-2xl font-bold text-primary-600">
+            <p className="text-lg sm:text-xl md:text-2xl font-bold text-primary-600">
               {formatCurrency(car.rentalPricePerDay)}
             </p>
-            <p className="text-sm text-gray-600">per day</p>
+            <p className="text-xs sm:text-sm text-gray-600">per day</p>
           </div>
-          <Button size="sm" type="button" onClick={handleBookClick}>
-            <Calendar className="mr-2 h-4 w-4" />
-            Book Now
+          <Button size="sm" type="button" onClick={handleBookClick} className="flex-shrink-0">
+            <Calendar className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Book Now</span>
+            <span className="sm:hidden">Book</span>
           </Button>
         </div>
       </CardContent>
