@@ -35,9 +35,18 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (email, password) => {
     set({ isLoading: true });
     try {
+      // Clear any existing expired tokens before login attempt
+      const existingToken = localStorage.getItem('token');
+      if (existingToken) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+      }
+      
       const response = await authService.login({ email, password });
       localStorage.setItem('token', response.token);
       localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem('user', JSON.stringify(response.user));
       set({
         user: response.user,
         token: response.token,
@@ -56,6 +65,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const response = await authService.register(data);
       localStorage.setItem('token', response.token);
       localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem('user', JSON.stringify(response.user));
       set({
         user: response.user,
         token: response.token,
@@ -80,17 +90,39 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   checkAuth: async () => {
     const token = localStorage.getItem('token');
+    const cachedUser = localStorage.getItem('user');
+    
     if (!token) {
       set({ isAuthenticated: false, user: null });
       return;
     }
 
+    // Use cached user data immediately to prevent flicker
+    if (cachedUser) {
+      try {
+        const user = JSON.parse(cachedUser);
+        set({ user, isAuthenticated: true });
+      } catch (e) {
+        // Invalid cached user data
+        localStorage.removeItem('user');
+      }
+    }
+
+    // Then verify with backend in the background
     try {
       const user = await authService.getCurrentUser();
+      localStorage.setItem('user', JSON.stringify(user));
       set({ user, isAuthenticated: true });
     } catch (error) {
-      await authService.logout();
-      set({ user: null, token: null, isAuthenticated: false });
+      // Only logout if we get a clear auth error
+      // Don't logout on network errors
+      const isAuthError = (error as any)?.response?.status === 401;
+      if (isAuthError) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
+        set({ user: null, token: null, isAuthenticated: false });
+      }
     }
   },
 }));

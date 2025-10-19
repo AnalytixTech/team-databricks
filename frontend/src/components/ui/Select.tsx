@@ -18,7 +18,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         <div className="relative">
           <select
             className={cn(
-              'flex h-11 w-full rounded-lg border border-gray-300 bg-white pl-4 pr-12 py-2 text-base text-gray-900 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:opacity-50 appearance-none',
+              'flex h-11 w-full rounded-lg border border-gray-300 bg-white pl-4 pr-12 py-2 text-base leading-tight font-normal text-gray-900 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:opacity-50 appearance-none',
+              '[&>option]:py-2 [&>option]:px-4 [&>option]:text-base [&>option]:leading-tight [&>option]:font-normal [&>option]:bg-white [&>option]:text-gray-900 [&>option:checked]:bg-primary-50 [&>option:hover]:bg-gray-100',
               error && 'border-red-500 focus:border-red-500 focus:ring-red-500/20',
               className
             )}
