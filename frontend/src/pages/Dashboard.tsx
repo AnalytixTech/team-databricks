@@ -116,10 +116,14 @@ export default function Dashboard() {
   const loadDashboardData = async () => {
     try {
       setIsLoading(true);
+      // Only pass dates if they're actually set, otherwise pass undefined
+      const startDateParam = dateRange.startDate || undefined;
+      const endDateParam = dateRange.endDate || undefined;
+      
       const [carsData, reservationsData, reportData] = await Promise.all([
         dashboardService.getOwnerCars().catch(() => []),
         dashboardService.getAllReservations().catch(() => []),
-        dashboardService.getReports(dateRange.startDate, dateRange.endDate).catch(() => ({
+        dashboardService.getReports(startDateParam, endDateParam).catch(() => ({
           overview: {
             totalRevenue: 0,
             totalBookings: 0,
@@ -165,12 +169,27 @@ export default function Dashboard() {
 
   const handleAddCar = () => {
     setEditingCar(null);
-    reset();
+    setSelectedImages([]);
+    reset({
+      make: '',
+      model: '',
+      type: undefined,
+      year: new Date().getFullYear(),
+      licensePlate: '',
+      mileage: undefined,
+      weight: undefined,
+      rentalPricePerDay: 0,
+      availabilityRules: '',
+      address: '',
+      city: '',
+      state: '',
+    });
     setShowCarModal(true);
   };
 
   const handleEditCar = (car: ICar) => {
     setEditingCar(car);
+    setSelectedImages([]); // Clear any previously selected images
     reset({
       make: car.make,
       model: car.model,
@@ -278,7 +297,22 @@ export default function Dashboard() {
       }
       
       setShowCarModal(false);
+      setEditingCar(null);
       setSelectedImages([]);
+      reset({
+        make: '',
+        model: '',
+        type: undefined,
+        year: new Date().getFullYear(),
+        licensePlate: '',
+        mileage: undefined,
+        weight: undefined,
+        rentalPricePerDay: 0,
+        availabilityRules: '',
+        address: '',
+        city: '',
+        state: '',
+      });
       loadDashboardData();
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to save car');
@@ -295,98 +329,227 @@ export default function Dashboard() {
       toast.loading('Generating PDF...', { id: 'pdf-export' });
 
       const doc = new jsPDF();
+      const primaryColor = [2, 132, 199]; // Primary blue color
+      const lightGray = [243, 244, 246];
+      const darkGray = [55, 65, 81];
+      const successGreen = [34, 197, 94];
       
-      // Add title and logo
-      doc.setFontSize(20);
-      doc.text('Fleetly Car Rental Report', 20, 20);
-      
-      // Add date range
-      const dateRangeText = dateRange.startDate && dateRange.endDate 
-        ? `Report Period: ${format(new Date(dateRange.startDate), 'MMM dd, yyyy')} - ${format(new Date(dateRange.endDate), 'MMM dd, yyyy')}`
-        : `Report Generated: ${format(new Date(), 'MMM dd, yyyy HH:mm')}`;
-      
-      doc.setFontSize(12);
-      doc.text(dateRangeText, 20, 35);
-      
-      let yPosition = 50;
-      
-      // Overview Section
-      doc.setFontSize(16);
-      doc.text('Overview', 20, yPosition);
-      yPosition += 15;
-      
-      doc.setFontSize(11);
-      doc.text(`Total Revenue: ${formatCurrency(report.overview?.totalRevenue || 0)}`, 20, yPosition);
-      yPosition += 10;
-      doc.text(`Total Bookings: ${report.overview?.totalBookings || 0}`, 20, yPosition);
-      yPosition += 10;
-      doc.text(`Average Booking Value: ${formatCurrency(report.overview?.averageBookingValue || 0)}`, 20, yPosition);
-      yPosition += 20;
-      
-      // Top Performing Cars
-      if (report.topCars && report.topCars.length > 0) {
-        doc.setFontSize(16);
-        doc.text('Top Performing Cars', 20, yPosition);
-        yPosition += 15;
+      // Helper function to add header
+      const addHeader = () => {
+        // Header background
+        doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.rect(0, 0, 210, 35, 'F');
+        
+        // Company name
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(24);
+        doc.setFont('helvetica', 'bold');
+        doc.text('FLEETLY', 20, 15);
         
         doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Car Rental Business Report', 20, 23);
+        
+        // Date range
+        const dateRangeText = dateRange.startDate && dateRange.endDate 
+          ? `${format(new Date(dateRange.startDate), 'MMM dd, yyyy')} - ${format(new Date(dateRange.endDate), 'MMM dd, yyyy')}`
+          : format(new Date(), 'MMM dd, yyyy HH:mm');
+        doc.text(dateRangeText, 20, 30);
+      };
+      
+      // Helper function to add footer
+      const addFooter = (pageNum: number, totalPages: number) => {
+        doc.setDrawColor(200, 200, 200);
+        doc.line(20, 275, 190, 275);
+        
+        doc.setTextColor(100, 100, 100);
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Generated by Fleetly Car Rental Platform', 20, 283);
+        doc.text(`Page ${pageNum} of ${totalPages}`, 170, 283);
+        doc.text(format(new Date(), 'MMM dd, yyyy HH:mm'), 85, 283);
+      };
+      
+      // Helper function to draw a card/box
+      const drawCard = (x: number, y: number, width: number, height: number) => {
+        doc.setFillColor(lightGray[0], lightGray[1], lightGray[2]);
+        doc.roundedRect(x, y, width, height, 3, 3, 'F');
+        doc.setDrawColor(220, 220, 220);
+        doc.roundedRect(x, y, width, height, 3, 3, 'S');
+      };
+      
+      // Add first page header
+      addHeader();
+      
+      let yPosition = 45;
+      
+      // Overview Section - Card Style
+      doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Overview', 20, yPosition);
+      yPosition += 8;
+      
+      // Overview cards in a grid
+      const cardWidth = 55;
+      const cardHeight = 25;
+      
+      // Total Revenue Card
+      drawCard(20, yPosition, cardWidth, cardHeight);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 100, 100);
+      doc.text('Total Revenue:', 25, yPosition + 8);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(successGreen[0], successGreen[1], successGreen[2]);
+      const revenueText = formatCurrency(report.overview?.totalRevenue || 0);
+      doc.text(revenueText, 25, yPosition + 18);
+      
+      // Total Bookings Card
+      drawCard(80, yPosition, cardWidth, cardHeight);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 100, 100);
+      doc.text('Total Bookings:', 85, yPosition + 8);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      doc.text(String(report.overview?.totalBookings || 0), 85, yPosition + 18);
+      
+      // Average Booking Value Card
+      drawCard(140, yPosition, cardWidth, cardHeight);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 100, 100);
+      doc.text('Avg. Booking:', 145, yPosition + 8);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+      const avgBookingText = formatCurrency(report.overview?.averageBookingValue || 0);
+      doc.text(avgBookingText, 145, yPosition + 18);
+      
+      yPosition += 35;
+      
+      // Top Performing Cars Section
+      if (report.topCars && report.topCars.length > 0) {
+        doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Top Performing Cars', 20, yPosition);
+        yPosition += 8;
+        
+        // Table header
+        drawCard(20, yPosition, 170, 10);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+        doc.text('Rank', 25, yPosition + 7);
+        doc.text('Car Model', 45, yPosition + 7);
+        doc.text('Revenue', 110, yPosition + 7);
+        doc.text('Bookings', 150, yPosition + 7);
+        yPosition += 12;
+        
+        // Table rows
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
         report.topCars.slice(0, 10).forEach((car, index) => {
-          if (yPosition > 260) { // Start new page if needed
+          if (yPosition > 255) {
             doc.addPage();
-            yPosition = 20;
+            addHeader();
+            yPosition = 45;
           }
           
-          const carText = `${index + 1}. ${car.make} ${car.model} - Revenue: ${formatCurrency(car.totalRevenue)} (${car.bookingCount} bookings)`;
-          doc.text(carText, 20, yPosition);
+          // Alternating row colors
+          if (index % 2 === 0) {
+            doc.setFillColor(248, 250, 252);
+            doc.rect(20, yPosition - 5, 170, 8, 'F');
+          }
+          
+          doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+          
+          // Rank
+          doc.text(`${index + 1}`, 28, yPosition);
+          
+          // Car Model
+          const carModel = `${car.make || ''} ${car.model || ''}`.trim();
+          doc.text(carModel, 45, yPosition);
+          
+          // Revenue - handle both field names
+          const revenue = car.revenue || car.totalRevenue || 0;
+          doc.text(formatCurrency(revenue), 110, yPosition);
+          
+          // Bookings
+          const bookings = car.bookingCount || 0;
+          doc.text(String(bookings), 155, yPosition);
+          
           yPosition += 8;
         });
         yPosition += 10;
       }
       
-      // Reservations by Status
+      // Reservations by Status Section
       if (report.reservationsByStatus && report.reservationsByStatus.length > 0) {
-        if (yPosition > 220) { // Start new page if needed
+        if (yPosition > 220) {
           doc.addPage();
-          yPosition = 20;
+          addHeader();
+          yPosition = 45;
         }
         
+        doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
         doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
         doc.text('Reservations by Status', 20, yPosition);
-        yPosition += 15;
+        yPosition += 10;
         
-        doc.setFontSize(11);
         report.reservationsByStatus.forEach((status) => {
-          doc.text(`${status._id}: ${status.count} reservations`, 20, yPosition);
-          yPosition += 8;
+          drawCard(20, yPosition, 80, 12);
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+          doc.text(status._id, 25, yPosition + 8);
+          
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+          doc.text(String(status.count), 88, yPosition + 8);
+          yPosition += 14;
         });
         yPosition += 10;
       }
       
-      // Reservations by Type
+      // Reservations by Type Section
       if (report.reservationsByType && report.reservationsByType.length > 0) {
-        if (yPosition > 220) { // Start new page if needed
+        if (yPosition > 220) {
           doc.addPage();
-          yPosition = 20;
+          addHeader();
+          yPosition = 45;
         }
         
+        doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
         doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
         doc.text('Reservations by Type', 20, yPosition);
-        yPosition += 15;
+        yPosition += 10;
         
-        doc.setFontSize(11);
         report.reservationsByType.forEach((type) => {
-          doc.text(`${type._id}: ${type.count} reservations`, 20, yPosition);
-          yPosition += 8;
+          drawCard(20, yPosition, 80, 12);
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+          doc.text(type._id, 25, yPosition + 8);
+          
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+          doc.text(String(type.count), 88, yPosition + 8);
+          yPosition += 14;
         });
       }
       
-      // Add footer
+      // Add footer to all pages
       const pageCount = doc.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
-        doc.setFontSize(9);
-        doc.text(`Page ${i} of ${pageCount}`, 20, 280);
-        doc.text('Generated by Fleetly Car Rental Platform', 120, 280);
+        addFooter(i, pageCount);
       }
       
       // Generate filename with date
@@ -900,24 +1063,23 @@ export default function Dashboard() {
                       {report.topCars.map((car, index) => (
                         <div
                           key={car.carId}
-                          className="flex items-center justify-between border-b border-gray-200 pb-4 last:border-0"
+                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 pb-4 last:border-0 gap-3"
                         >
-                          <div className="flex items-center gap-4">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-lg font-bold text-primary-600">
+                          <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary-100 text-base sm:text-lg font-bold text-primary-600">
                               {index + 1}
                             </div>
-                            <div>
-                              <p className="font-semibold text-gray-900">
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-sm sm:text-base text-gray-900 truncate">
                                 {car.make} {car.model}
                               </p>
-                              <p className="text-sm text-gray-600">Car ID: {car.carId}</p>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="text-xl font-bold text-green-600">
+                          <div className="text-left sm:text-right pl-13 sm:pl-0 flex-shrink-0">
+                            <p className="text-lg sm:text-xl font-bold text-green-600">
                               {formatCurrency(car.revenue)}
                             </p>
-                            <p className="text-sm text-gray-600">Total Revenue</p>
+                            <p className="text-xs sm:text-sm text-gray-600">{car.bookingCount} bookings</p>
                           </div>
                         </div>
                       ))}
@@ -1023,7 +1185,22 @@ export default function Dashboard() {
         isOpen={showCarModal}
         onClose={() => {
           setShowCarModal(false);
+          setEditingCar(null);
           setSelectedImages([]);
+          reset({
+            make: '',
+            model: '',
+            type: undefined,
+            year: new Date().getFullYear(),
+            licensePlate: '',
+            mileage: undefined,
+            weight: undefined,
+            rentalPricePerDay: 0,
+            availabilityRules: '',
+            address: '',
+            city: '',
+            state: '',
+          });
         }}
         title={editingCar ? 'Edit Car' : 'Add New Car'}
         size="lg"
@@ -1164,7 +1341,22 @@ export default function Dashboard() {
               className="flex-1"
               onClick={() => {
                 setShowCarModal(false);
+                setEditingCar(null);
                 setSelectedImages([]);
+                reset({
+                  make: '',
+                  model: '',
+                  type: undefined,
+                  year: new Date().getFullYear(),
+                  licensePlate: '',
+                  mileage: undefined,
+                  weight: undefined,
+                  rentalPricePerDay: 0,
+                  availabilityRules: '',
+                  address: '',
+                  city: '',
+                  state: '',
+                });
               }}
             >
               Cancel

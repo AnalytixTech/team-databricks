@@ -413,28 +413,44 @@ export const getReports = async (
     const { startDate, endDate } = req.query;
 
     // First, get all cars owned by this user
-    const ownedCarIds = await Car.find({ ownerId }).distinct('_id');
+    const ownedCarIds = await Car.find({ ownerId }).distinct("_id");
 
     // Include CONFIRMED, COMPLETED, and PENDING reservations that have been paid (deposit or full)
     // BUT ONLY for cars owned by this business owner
     const query: any = {
       carId: { $in: ownedCarIds }, // 🔒 SECURITY FIX: Only include owned cars
       $or: [
-        { status: { $in: [ReservationStatus.CONFIRMED, ReservationStatus.COMPLETED] } },
-        { 
+        {
+          status: {
+            $in: [ReservationStatus.CONFIRMED, ReservationStatus.COMPLETED],
+          },
+        },
+        {
           status: ReservationStatus.PENDING,
-          paymentStatus: { $in: [PaymentStatus.DEPOSIT_PAID, PaymentStatus.FULLY_PAID] }
-        }
-      ]
+          paymentStatus: {
+            $in: [PaymentStatus.DEPOSIT_PAID, PaymentStatus.FULLY_PAID],
+          },
+        },
+      ],
     };
 
-    if (startDate || endDate) {
+    // Only add date filter if valid dates are provided
+    if ((startDate && startDate !== "") || (endDate && endDate !== "")) {
       query.createdAt = {};
-      if (startDate) query.createdAt.$gte = new Date(startDate as string);
-      if (endDate) query.createdAt.$lte = new Date(endDate as string);
+      if (startDate && startDate !== "") {
+        query.createdAt.$gte = new Date(startDate as string);
+      }
+      if (endDate && endDate !== "") {
+        query.createdAt.$lte = new Date(endDate as string);
+      }
     }
 
-    console.log('📊 Generating reports for owner:', ownerId, 'with query:', JSON.stringify(query, null, 2));
+    console.log(
+      "📊 Generating reports for owner:",
+      ownerId,
+      "with query:",
+      JSON.stringify(query, null, 2)
+    );
 
     // Get reservations (only for owned cars)
     const reservations = await Reservation.find(query);
@@ -443,10 +459,11 @@ export const getReports = async (
 
     // Calculate metrics - only count revenue from paid reservations
     const paidReservations = reservations.filter(
-      res => res.paymentStatus === PaymentStatus.DEPOSIT_PAID || 
-             res.paymentStatus === PaymentStatus.FULLY_PAID
+      (res) =>
+        res.paymentStatus === PaymentStatus.DEPOSIT_PAID ||
+        res.paymentStatus === PaymentStatus.FULLY_PAID
     );
-    
+
     const totalRevenue = paidReservations.reduce((sum, res) => {
       // For deposit-paid, count the deposit amount; for fully-paid, count total
       if (res.paymentStatus === PaymentStatus.FULLY_PAID) {
@@ -456,18 +473,23 @@ export const getReports = async (
       }
       return sum;
     }, 0);
-    
-    const totalBookings = reservations.length;
-    const averageBookingValue = totalBookings > 0 ? totalRevenue / totalBookings : 0;
 
-    console.log(`💰 Revenue calculated: ${totalRevenue} from ${paidReservations.length} paid reservations`);
+    const totalBookings = reservations.length;
+    const averageBookingValue =
+      totalBookings > 0 ? totalRevenue / totalBookings : 0;
+
+    console.log(
+      `💰 Revenue calculated: ${totalRevenue} from ${paidReservations.length} paid reservations`
+    );
 
     // Get revenue by car - only count paid amounts
     const revenueByCarMap = new Map<string, number>();
+    const bookingCountByCarMap = new Map<string, number>();
+
     for (const reservation of paidReservations) {
       const carId = reservation.carId.toString();
       const current = revenueByCarMap.get(carId) || 0;
-      
+
       // Add the actual paid amount
       let paidAmount = 0;
       if (reservation.paymentStatus === PaymentStatus.FULLY_PAID) {
@@ -475,11 +497,17 @@ export const getReports = async (
       } else if (reservation.paymentStatus === PaymentStatus.DEPOSIT_PAID) {
         paidAmount = reservation.depositPaid;
       }
-      
+
       revenueByCarMap.set(carId, current + paidAmount);
+
+      // Count bookings per car
+      const currentCount = bookingCountByCarMap.get(carId) || 0;
+      bookingCountByCarMap.set(carId, currentCount + 1);
     }
 
-    console.log(`🚗 Revenue by car calculated for ${revenueByCarMap.size} cars`);
+    console.log(
+      `🚗 Revenue by car calculated for ${revenueByCarMap.size} cars`
+    );
 
     // Get car details for top cars
     const topCars = await Promise.all(
@@ -488,11 +516,13 @@ export const getReports = async (
         .slice(0, 5)
         .map(async ([carId, revenue]) => {
           const car = await Car.findById(carId);
+          const bookingCount = bookingCountByCarMap.get(carId) || 0;
           return {
             carId,
             make: car?.make,
             model: car?.model,
             revenue,
+            bookingCount,
           };
         })
     );
@@ -500,12 +530,12 @@ export const getReports = async (
     // Get reservation statistics
     const reservationsByStatus = await Reservation.aggregate([
       { $match: query },
-      { $group: { _id: '$status', count: { $sum: 1 } } },
+      { $group: { _id: "$status", count: { $sum: 1 } } },
     ]);
 
     const reservationsByType = await Reservation.aggregate([
       { $match: query },
-      { $group: { _id: '$reservationType', count: { $sum: 1 } } },
+      { $group: { _id: "$reservationType", count: { $sum: 1 } } },
     ]);
 
     res.status(HTTP_STATUS.OK).json(

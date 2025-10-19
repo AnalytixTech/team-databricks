@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { format } from 'date-fns';
 import toast from 'react-hot-toast';
-import { User, CreditCard, FileText, Save, Lock } from 'lucide-react';
+import { User, CreditCard, FileText, Save, Lock, Edit, X } from 'lucide-react';
 import SidebarLayout from '@/components/layout/SidebarLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -32,6 +33,7 @@ export default function Profile() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
 
   const {
     register,
@@ -90,6 +92,7 @@ export default function Profile() {
           : undefined,
       });
       setUser(updatedUser);
+      setIsEditingProfile(false); // Reset edit mode after save
       toast.success('Profile updated successfully');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to update profile');
@@ -169,6 +172,12 @@ export default function Profile() {
                       <Badge variant="info">{user.role}</Badge>
                     </div>
                   </div>
+                  {user.role === UserRole.BUSINESS_OWNER && (
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Business Name</label>
+                      <p className="mt-1 text-gray-900">{user.profile?.businessName || 'Not set'}</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -185,60 +194,123 @@ export default function Profile() {
                         : 'Contact & License Information'}
                     </CardTitle>
                   </div>
+                  {!isEditingProfile && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setIsEditingProfile(true)}
+                    >
+                      <Edit className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Edit</span>
+                    </Button>
+                  )}
                 </div>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  <Input
-                    label="Phone Number"
-                    type="tel"
-                    error={errors.phone?.message}
-                    {...register('phone')}
-                  />
-
-                  {/* Business Name for Business Owners */}
-                  {user.role === UserRole.BUSINESS_OWNER && (
-                    <Input
-                      label="Business Name"
-                      error={errors.businessName?.message}
-                      {...register('businessName', {
-                        required: 'Business name is required',
-                      })}
-                    />
-                  )}
-
-                  {/* Driver License for Regular Users */}
-                  {user.role === UserRole.USER && (
-                    <div className="border-t pt-6">
-                      <h3 className="mb-4 text-lg font-semibold text-gray-900">
-                        Driver License Information
-                      </h3>
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <Input
-                          label="License Number"
-                          error={errors.licenseNumber?.message}
-                          {...register('licenseNumber')}
-                        />
-                        <Input
-                          label="Expiry Date"
-                          type="date"
-                          error={errors.licenseExpiryDate?.message}
-                          {...register('licenseExpiryDate')}
-                        />
-                        <Input
-                          label="State"
-                          error={errors.licenseState?.message}
-                          {...register('licenseState')}
-                        />
-                      </div>
+                {!isEditingProfile ? (
+                  // Read-only view
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Phone Number</label>
+                      <p className="mt-1 text-gray-900">{user.phone || 'Not set'}</p>
                     </div>
-                  )}
+                    
+                    {user.role === UserRole.USER && user.profile?.driverLicense && (
+                      <>
+                        <div>
+                          <label className="text-sm font-medium text-gray-700">License Number</label>
+                          <p className="mt-1 text-gray-900">{user.profile.driverLicense.number}</p>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                          <div>
+                            <label className="text-sm font-medium text-gray-700">Expiry Date</label>
+                            <p className="mt-1 text-gray-900">
+                              {format(new Date(user.profile.driverLicense.expiryDate), 'MMM dd, yyyy')}
+                            </p>
+                          </div>
+                          <div>
+                            <label className="text-sm font-medium text-gray-700">State</label>
+                            <p className="mt-1 text-gray-900">{user.profile.driverLicense.state}</p>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  // Editable form
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <Input
+                      label="Phone Number"
+                      type="tel"
+                      error={errors.phone?.message}
+                      {...register('phone')}
+                    />
 
-                  <Button type="submit" isLoading={isSaving} disabled={isSaving}>
-                    <Save className="mr-2 h-4 w-4" />
-                    Save Changes
-                  </Button>
-                </form>
+                    {/* Business Name for Business Owners */}
+                    {user.role === UserRole.BUSINESS_OWNER && (
+                      <Input
+                        label="Business Name"
+                        error={errors.businessName?.message}
+                        {...register('businessName', {
+                          required: 'Business name is required',
+                        })}
+                      />
+                    )}
+
+                    {/* Driver License for Regular Users */}
+                    {user.role === UserRole.USER && (
+                      <div className="border-t pt-6">
+                        <h3 className="mb-4 text-lg font-semibold text-gray-900">
+                          Driver License Information
+                        </h3>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                          <Input
+                            label="License Number"
+                            error={errors.licenseNumber?.message}
+                            {...register('licenseNumber')}
+                          />
+                          <Input
+                            label="Expiry Date"
+                            type="date"
+                            error={errors.licenseExpiryDate?.message}
+                            {...register('licenseExpiryDate')}
+                          />
+                          <Input
+                            label="State"
+                            error={errors.licenseState?.message}
+                            {...register('licenseState')}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setIsEditingProfile(false);
+                          // Reset form values to original
+                          if (user.phone) setValue('phone', user.phone);
+                          if (user.profile?.businessName) setValue('businessName', user.profile.businessName);
+                          if (user.profile?.driverLicense) {
+                            setValue('licenseNumber', user.profile.driverLicense.number);
+                            setValue('licenseExpiryDate', user.profile.driverLicense.expiryDate.split('T')[0]);
+                            setValue('licenseState', user.profile.driverLicense.state);
+                          }
+                        }}
+                      >
+                        <X className="h-4 w-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Cancel</span>
+                      </Button>
+                      <Button type="submit" isLoading={isSaving} disabled={isSaving}>
+                        <Save className="mr-2 h-4 w-4" />
+                        Save Changes
+                      </Button>
+                    </div>
+                  </form>
+                )}
               </CardContent>
             </Card>
 
