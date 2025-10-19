@@ -177,7 +177,7 @@ export default function Onboarding() {
               {/* Mobile menu button */}
               <button
                 type="button"
-                className="md:hidden inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 hover:text-gray-900"
+                className="md:hidden inline-flex items-center justify-center rounded-md p-4 text-gray-700 hover:text-gray-900"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 <span className="sr-only">Open main menu</span>
@@ -209,28 +209,28 @@ export default function Onboarding() {
                 <nav className="space-y-1">
                   <a 
                     href="#features" 
-                    className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                    className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors text-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Features
                   </a>
                   <a 
                     href="#how-it-works" 
-                    className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                    className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors text-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     How It Works
                   </a>
                   <a 
                     href="#testimonials" 
-                    className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                    className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors text-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Testimonials
                   </a>
                   <a 
                     href="/about" 
-                    className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                    className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors text-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     About
@@ -240,7 +240,7 @@ export default function Onboarding() {
                       setMobileMenuOpen(false);
                       openLoginModal();
                     }}
-                    className="w-full text-left rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                    className="w-full text-center rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors"
                   >
                     Sign In
                   </button>

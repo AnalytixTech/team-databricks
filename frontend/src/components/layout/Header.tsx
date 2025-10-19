@@ -35,7 +35,7 @@ export default function Header() {
         <div className="flex lg:hidden">
           <button
             type="button"
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 hover:text-gray-900"
+            className="inline-flex items-center justify-center rounded-md p-4 text-gray-700 hover:text-gray-900"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <span className="sr-only">Open main menu</span>
@@ -110,7 +110,7 @@ export default function Header() {
             {(!isAuthenticated || user?.role !== UserRole.BUSINESS_OWNER) && (
               <Link
                 to="/cars"
-                className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors text-center"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Browse Cars
@@ -121,7 +121,7 @@ export default function Header() {
               <>
                 <Link
                   to="/profile"
-                  className="flex items-center gap-x-2 rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                  className="flex items-center justify-center gap-x-2 rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <User className="h-5 w-5" />
@@ -132,7 +132,7 @@ export default function Header() {
                     setMobileMenuOpen(false);
                     handleLogout();
                   }}
-                  className="flex w-full items-center gap-x-2 rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                  className="flex w-full items-center justify-center gap-x-2 rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
                 >
                   <LogOut className="h-5 w-5" />
                   Logout
@@ -142,7 +142,7 @@ export default function Header() {
               <>
                 <Link
                   to="/login"
-                  className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                  className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors text-center"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Log in
