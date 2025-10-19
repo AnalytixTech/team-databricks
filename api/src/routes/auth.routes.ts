@@ -45,6 +45,9 @@ router.post(
   authController.refreshToken
 );
 
+// Logout
+router.post('/logout', authenticate, authController.logout);
+
 // OTP Routes
 router.post(
   '/send-otp',

@@ -51,4 +51,26 @@ router.post(
 // Get list of banks
 router.get('/banks', userController.getBanks);
 
+// Change password
+router.post(
+  '/change-password',
+  validate([
+    body('currentPassword').notEmpty().withMessage('Current password is required'),
+    body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters'),
+  ]),
+  userController.changePassword
+);
+
+// Payment methods
+router.post(
+  '/payment-methods',
+  validate([
+    body('authorization_code').notEmpty().withMessage('Authorization code is required'),
+    body('type').optional().isString(),
+  ]),
+  userController.addPaymentMethod
+);
+
+router.delete('/payment-methods/:id', userController.removePaymentMethod);
+
 export default router;

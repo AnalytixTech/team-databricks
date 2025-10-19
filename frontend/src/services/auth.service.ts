@@ -37,10 +37,19 @@ export const authService = {
     return data.data!;
   },
 
-  logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
+  async logout(): Promise<void> {
+    try {
+      // Call backend logout endpoint
+      await axios.post('/auth/logout');
+    } catch (error) {
+      // Even if backend call fails, still clear local storage
+      console.error('Logout error:', error);
+    } finally {
+      // Always clear local storage
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+    }
   },
 
   async sendOTP(email: string, type: 'registration' | 'forgot-password'): Promise<void> {

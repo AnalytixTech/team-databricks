@@ -1,10 +1,14 @@
 import { Response, NextFunction } from 'express';
 import User from '../models/User';
-import { AuthRequest, UserRole } from '../types';
-import { NotFoundError, BadRequestError } from '../utils/errors';
-import { ERROR_MESSAGES, HTTP_STATUS } from '../utils/constants';
-import { successResponse } from '../utils/helpers';
-import paymentService from '../services/payment.service';
+import { AuthRequest, UserRole, IPaymentMethod } from "../types";
+import { NotFoundError, BadRequestError } from "../utils/errors";
+import {
+  ERROR_MESSAGES,
+  HTTP_STATUS,
+  SUCCESS_MESSAGES,
+} from "../utils/constants";
+import { successResponse } from "../utils/helpers";
+import paymentService from "../services/payment.service";
 
 /**
  * Setup payout account (create Paystack subaccount)
@@ -24,7 +28,7 @@ export const setupPayoutAccount = async (
     // Find user
     const user = await User.findById((req.user as any).id);
     if (!user) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError("User not found");
     }
 
     // Verify account number
@@ -57,7 +61,7 @@ export const setupPayoutAccount = async (
           subaccount_code: subaccount.subaccount_code,
           account_name: accountDetails.account_name,
         },
-        'Payout account setup successfully'
+        "Payout account setup successfully"
       )
     );
   } catch (error) {
@@ -96,7 +100,7 @@ export const getProfile = async (
 
     const user = await User.findById((req.user as any).id);
     if (!user) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError("User not found");
     }
 
     res.status(HTTP_STATUS.OK).json(successResponse(user));
@@ -122,7 +126,7 @@ export const updateProfile = async (
 
     const user = await User.findById((req.user as any).id);
     if (!user) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError("User not found");
     }
 
     if (phone) user.phone = phone;
@@ -138,21 +142,137 @@ export const updateProfile = async (
       today.setHours(0, 0, 0, 0);
 
       if (licenseExpiry < today) {
-        throw new BadRequestError('Driver license has expired. Please provide a valid license.');
+        throw new BadRequestError(
+          "Driver license has expired. Please provide a valid license."
+        );
       }
 
       user.profile.driverLicense = {
         number: driverLicense.number,
         expiryDate: driverLicense.expiryDate,
-        state: driverLicense.state || '',
+        state: driverLicense.state || "",
       };
     }
 
     await user.save();
 
-    res.status(HTTP_STATUS.OK).json(
-      successResponse(user, 'Profile updated successfully')
+    res
+      .status(HTTP_STATUS.OK)
+      .json(successResponse(user, "Profile updated successfully"));
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Change password
+ */
+export const changePassword = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      throw new BadRequestError(ERROR_MESSAGES.UNAUTHORIZED);
+    }
+
+    const { currentPassword, newPassword } = req.body;
+
+    const user = await User.findById((req.user as any).id).select("+password");
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    // Verify current password
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      throw new BadRequestError("Current password is incorrect");
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save();
+
+    res
+      .status(HTTP_STATUS.OK)
+      .json(successResponse(null, "Password changed successfully"));
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Add payment method
+ */
+export const addPaymentMethod = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      throw new BadRequestError(ERROR_MESSAGES.UNAUTHORIZED);
+    }
+
+    const { type, authorization_code, last4, expiryMonth, expiryYear } =
+      req.body;
+
+    const user = await User.findById((req.user as any).id);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    // Add payment method to user's saved payment methods
+    const paymentMethod: IPaymentMethod = {
+      type: type || "card",
+      authorization_code,
+      last4,
+      expiryMonth,
+      expiryYear,
+    };
+
+    user.profile.savedPaymentMethods.push(paymentMethod);
+    await user.save();
+
+    res
+      .status(HTTP_STATUS.CREATED)
+      .json(successResponse(user, SUCCESS_MESSAGES.PAYMENT_METHOD_ADDED));
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Remove payment method
+ */
+export const removePaymentMethod = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      throw new BadRequestError(ERROR_MESSAGES.UNAUTHORIZED);
+    }
+
+    const { id } = req.params;
+
+    const user = await User.findById((req.user as any).id);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    // Remove payment method
+    user.profile.savedPaymentMethods = user.profile.savedPaymentMethods.filter(
+      (method) => method._id?.toString() !== id
     );
+
+    await user.save();
+
+    res
+      .status(HTTP_STATUS.OK)
+      .json(successResponse(null, SUCCESS_MESSAGES.PAYMENT_METHOD_REMOVED));
   } catch (error) {
     next(error);
   }
