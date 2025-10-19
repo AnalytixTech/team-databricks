@@ -334,6 +334,11 @@ export default function Dashboard() {
       const darkGray = [55, 65, 81];
       const successGreen = [34, 197, 94];
       
+      // PDF-friendly currency formatter (jsPDF doesn't render ₦ symbol well)
+      const formatCurrencyForPDF = (amount: number): string => {
+        return `NGN ${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      };
+      
       // Helper function to add header
       const addHeader = () => {
         // Header background
@@ -400,10 +405,10 @@ export default function Dashboard() {
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(100, 100, 100);
       doc.text('Total Revenue:', 25, yPosition + 8);
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(successGreen[0], successGreen[1], successGreen[2]);
-      const revenueText = formatCurrency(report.overview?.totalRevenue || 0);
+      const revenueText = formatCurrencyForPDF(report.overview?.totalRevenue || 0);
       doc.text(revenueText, 25, yPosition + 18);
       
       // Total Bookings Card
@@ -423,10 +428,10 @@ export default function Dashboard() {
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(100, 100, 100);
       doc.text('Avg. Booking:', 145, yPosition + 8);
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
-      const avgBookingText = formatCurrency(report.overview?.averageBookingValue || 0);
+      const avgBookingText = formatCurrencyForPDF(report.overview?.averageBookingValue || 0);
       doc.text(avgBookingText, 145, yPosition + 18);
       
       yPosition += 35;
@@ -477,7 +482,7 @@ export default function Dashboard() {
           
           // Revenue - handle both field names
           const revenue = car.revenue || car.totalRevenue || 0;
-          doc.text(formatCurrency(revenue), 110, yPosition);
+          doc.text(formatCurrencyForPDF(revenue), 110, yPosition);
           
           // Bookings
           const bookings = car.bookingCount || 0;
