@@ -11,9 +11,11 @@ import Spinner from '@/components/ui/Spinner';
 import { userService } from '@/services/user.service';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
+import { UserRole } from '@/types';
 
 interface ProfileForm {
   phone: string;
+  businessName?: string;
   licenseNumber: string;
   licenseExpiryDate: string;
   licenseState: string;
@@ -60,6 +62,7 @@ export default function Profile() {
       
       // Set form values
       if (data.phone) setValue('phone', data.phone);
+      if (data.profile?.businessName) setValue('businessName', data.profile.businessName);
       if (data.profile?.driverLicense) {
         setValue('licenseNumber', data.profile.driverLicense.number);
         setValue('licenseExpiryDate', data.profile.driverLicense.expiryDate.split('T')[0]);
@@ -77,6 +80,7 @@ export default function Profile() {
     try {
       const updatedUser = await userService.updateProfile({
         phone: data.phone,
+        businessName: data.businessName,
         driverLicense: data.licenseNumber
           ? {
               number: data.licenseNumber,
@@ -165,25 +169,21 @@ export default function Profile() {
                       <Badge variant="info">{user.role}</Badge>
                     </div>
                   </div>
-                  {user.profile?.businessName && (
-                    <div>
-                      <label className="text-sm font-medium text-gray-700">
-                        Business Name
-                      </label>
-                      <p className="mt-1 text-gray-900">{user.profile.businessName}</p>
-                    </div>
-                  )}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Contact & Driver License */}
+            {/* Contact & Business/License Information */}
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <FileText className="h-5 w-5 text-primary-600" />
-                    <CardTitle>Contact & License Information</CardTitle>
+                    <CardTitle>
+                      {user.role === UserRole.BUSINESS_OWNER 
+                        ? 'Contact & Business Information' 
+                        : 'Contact & License Information'}
+                    </CardTitle>
                   </div>
                 </div>
               </CardHeader>
@@ -196,29 +196,43 @@ export default function Profile() {
                     {...register('phone')}
                   />
 
-                  <div className="border-t pt-6">
-                    <h3 className="mb-4 text-lg font-semibold text-gray-900">
-                      Driver License Information
-                    </h3>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <Input
-                        label="License Number"
-                        error={errors.licenseNumber?.message}
-                        {...register('licenseNumber')}
-                      />
-                      <Input
-                        label="Expiry Date"
-                        type="date"
-                        error={errors.licenseExpiryDate?.message}
-                        {...register('licenseExpiryDate')}
-                      />
-                      <Input
-                        label="State"
-                        error={errors.licenseState?.message}
-                        {...register('licenseState')}
-                      />
+                  {/* Business Name for Business Owners */}
+                  {user.role === UserRole.BUSINESS_OWNER && (
+                    <Input
+                      label="Business Name"
+                      error={errors.businessName?.message}
+                      {...register('businessName', {
+                        required: 'Business name is required',
+                      })}
+                    />
+                  )}
+
+                  {/* Driver License for Regular Users */}
+                  {user.role === UserRole.USER && (
+                    <div className="border-t pt-6">
+                      <h3 className="mb-4 text-lg font-semibold text-gray-900">
+                        Driver License Information
+                      </h3>
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <Input
+                          label="License Number"
+                          error={errors.licenseNumber?.message}
+                          {...register('licenseNumber')}
+                        />
+                        <Input
+                          label="Expiry Date"
+                          type="date"
+                          error={errors.licenseExpiryDate?.message}
+                          {...register('licenseExpiryDate')}
+                        />
+                        <Input
+                          label="State"
+                          error={errors.licenseState?.message}
+                          {...register('licenseState')}
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <Button type="submit" isLoading={isSaving} disabled={isSaving}>
                     <Save className="mr-2 h-4 w-4" />
