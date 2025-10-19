@@ -1,17 +1,4 @@
 {
-  "version": 2,
-  "buildCommand": "npm ci && npm run build",
-  "outputDirectory": "dist",
-  "devCommand": "npm run dev",
-  "installCommand": "npm ci",
-  "framework": "vite",
-  "regions": ["iad1"],
-  "build": {
-    "env": {
-      "NODE_VERSION": "20",
-      "NODE_ENV": "production"
-    }
-  },
   "rewrites": [
     {
       "source": "/(.*)",
@@ -51,4 +38,3 @@
     }
   ]
 }
-
