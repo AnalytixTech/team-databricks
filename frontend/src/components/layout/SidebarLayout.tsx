@@ -1,6 +1,5 @@
 import { ReactNode, useState, useEffect } from 'react';
 import Header from './Header.tsx';
-import Footer from './Footer.tsx';
 import Sidebar from './Sidebar.tsx';
 import BottomNav from './BottomNav.tsx';
 import { useAuthStore } from '@/store/auth.store';
@@ -37,7 +36,6 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
       <main className={`flex-1 transition-all duration-300 ${getMainMargin()} ${isAuthenticated ? 'pb-20 lg:pb-0' : ''}`}>
         {children}
       </main>
-      <Footer className={isAuthenticated ? 'mb-16 lg:mb-0' : ''} />
       {isAuthenticated && <BottomNav />}
     </div>
   );
