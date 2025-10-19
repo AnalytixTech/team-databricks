@@ -77,18 +77,18 @@ passport.use(
             );
 
             // Create new user with specified role
-            user = await User.create({
+            const userData: any = {
               email,
               googleId: profile.id,
               role: userRole,
               profile: {
                 savedPaymentMethods: [],
-                // Business name will be updated later for business owners
-                ...(userRole === UserRole.BUSINESS_OWNER && {
-                  businessName: "",
-                }),
               },
-            });
+            };
+
+            // For business owners, don't set businessName yet - they'll add it later
+            // This avoids validation errors on Google OAuth registration
+            user = await User.create(userData);
 
             // Mark as new user for business owners (to prompt for business name)
             (user as any).isNewBusinessOwner =
