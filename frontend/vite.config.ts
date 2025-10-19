@@ -10,6 +10,12 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
     extensions: [".tsx", ".ts", ".jsx", ".js", ".json"],
+    preserveSymlinks: false,
+  },
+  build: {
+    commonjsOptions: {
+      include: [/node_modules/],
+    },
   },
   server: {
     port: 3000,
