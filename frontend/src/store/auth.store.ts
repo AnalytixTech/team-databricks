@@ -11,7 +11,7 @@ interface AuthState {
   setToken: (token: string | null) => void;
   login: (email: string, password: string) => Promise<void>;
   register: (data: any) => Promise<AuthResponse>;
-  logout: () => void;
+  logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
 }
 
@@ -69,8 +69,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  logout: () => {
-    authService.logout();
+  logout: async () => {
+    await authService.logout();
     set({
       user: null,
       token: null,
@@ -89,7 +89,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const user = await authService.getCurrentUser();
       set({ user, isAuthenticated: true });
     } catch (error) {
-      authService.logout();
+      await authService.logout();
       set({ user: null, token: null, isAuthenticated: false });
     }
   },

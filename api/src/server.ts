@@ -25,7 +25,29 @@ connectDB();
 
 // Middleware
 app.use(helmet()); // Security headers
-app.use(cors({ origin: config.FRONTEND_URL, credentials: true })); // CORS
+
+// CORS configuration - Allow both production and development URLs
+const allowedOrigins = [
+  config.FRONTEND_URL,
+  'http://localhost:3000',
+  'http://localhost:5173', // Vite default port
+  'https://fleetly-6j7s.onrender.com', // Production frontend
+];
+
+app.use(cors({ 
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true 
+}));
+
 app.use(express.json({ limit: '10mb' })); // Body parser
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -84,6 +106,10 @@ const httpServer = createServer(app);
 initializeSocket(httpServer);
 
 const server = httpServer.listen(PORT, () => {
+  const apiDocsUrl = config.NODE_ENV === 'production' 
+    ? `https://api-fleetly.onrender.com/api-docs`
+    : `http://localhost:${PORT}/api-docs`;
+  
   console.log(`
 ╔══════════════════════════════════════════════╗
 ║     Fleetly Car Rental Backend               ║
@@ -91,7 +117,8 @@ const server = httpServer.listen(PORT, () => {
 ║     Environment: ${config.NODE_ENV.padEnd(18)}          ║
 ║     Database: Connected                      ║
 ║     Socket.IO: Initialized                   ║
-║     API Docs: http://localhost:${PORT}/api-docs ║
+║     Frontend URL: ${config.FRONTEND_URL.padEnd(24)}     ║
+║     API Docs: ${apiDocsUrl.padEnd(31)}          ║
 ╚══════════════════════════════════════════════╝
   `);
 
