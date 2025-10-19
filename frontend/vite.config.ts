@@ -6,15 +6,12 @@ import path from 'path';
 export default defineConfig({
   plugins: [TanStackRouterVite(), react()],
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-    extensions: [".tsx", ".ts", ".jsx", ".js", ".json"],
-    preserveSymlinks: false,
+    alias: [{ find: "@", replacement: path.resolve(__dirname, "./src") }],
+    extensions: [".tsx", ".ts", ".jsx", ".js", ".json", ".mjs"],
   },
   build: {
-    commonjsOptions: {
-      include: [/node_modules/],
+    rollupOptions: {
+      external: [],
     },
   },
   server: {
