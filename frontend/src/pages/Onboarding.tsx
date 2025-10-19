@@ -147,89 +147,165 @@ export default function Onboarding() {
     },
   ];
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <>
       <div className="min-h-screen bg-[#272727]">
         {/* Header */}
-        <header className="sticky top-0 z-40 border-b border-gray-700 bg-[#272727]/95 backdrop-blur-sm">
+        <header className="sticky top-0 z-40 border-b border-gray-200 bg-gray-100/95 backdrop-blur-sm">
           <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-12">
-                <img src="/Frame 2147226802.svg" alt="Fleetly" className="h-10" />
+                <img src="/Frame 2147226802.svg" alt="Fleetly" className="h-8 sm:h-10" />
                 <nav className="hidden md:flex items-center gap-8">
-                  <a href="#features" className="text-sm font-medium text-gray-300 hover:text-white">
+                  <a href="#features" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
                     Features
                   </a>
-                  <a href="#how-it-works" className="text-sm font-medium text-gray-300 hover:text-white">
+                  <a href="#how-it-works" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
                     How It Works
                   </a>
-                  <a href="#testimonials" className="text-sm font-medium text-gray-300 hover:text-white">
+                  <a href="#testimonials" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
                     Testimonials
                   </a>
-                  <a href="/about" className="text-sm font-medium text-gray-300 hover:text-white">
+                  <a href="/about" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
                     About
                   </a>
                 </nav>
               </div>
-              <div className="flex items-center gap-4">
-                <Button variant="ghost" onClick={openLoginModal} className="text-white hover:bg-gray-700">
+              
+              {/* Mobile menu button */}
+              <button
+                type="button"
+                className="md:hidden inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 hover:text-gray-900"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                <span className="sr-only">Open main menu</span>
+                {mobileMenuOpen ? (
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                  </svg>
+                )}
+              </button>
+
+              {/* Desktop auth buttons */}
+              <div className="hidden md:flex items-center gap-4">
+                <Button variant="ghost" onClick={openLoginModal} className="text-gray-700 hover:bg-gray-200 hover:text-gray-900">
                   Sign In
                 </Button>
-                <Button onClick={() => openRegisterModal('renter')} className="bg-blue-600 hover:bg-blue-700">
+                <Button onClick={() => openRegisterModal('renter')} className="bg-primary-600 hover:bg-primary-700">
                   Get Started
                 </Button>
               </div>
             </div>
+
+            {/* Mobile menu */}
+            {mobileMenuOpen && (
+              <div className="md:hidden mt-4 pt-4 border-t border-gray-200">
+                <nav className="space-y-1">
+                  <a 
+                    href="#features" 
+                    className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Features
+                  </a>
+                  <a 
+                    href="#how-it-works" 
+                    className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    How It Works
+                  </a>
+                  <a 
+                    href="#testimonials" 
+                    className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Testimonials
+                  </a>
+                  <a 
+                    href="/about" 
+                    className="block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    About
+                  </a>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      openLoginModal();
+                    }}
+                    className="w-full text-left rounded-lg px-3 py-2.5 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      openRegisterModal('renter');
+                    }}
+                    className="w-full text-center rounded-lg bg-primary-600 px-3 py-2.5 text-base font-semibold text-white hover:bg-primary-700 transition-colors mt-2"
+                  >
+                    Get Started
+                  </button>
+                </nav>
+              </div>
+            )}
           </div>
         </header>
 
         {/* Hero Section */}
         <section className="relative overflow-hidden">
-          <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-8 items-center">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:py-16 md:py-20 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 gap-8 sm:gap-10 lg:gap-12 lg:grid-cols-2 items-center">
               {/* Left Content */}
-              <div className="space-y-8">
-                <div className="space-y-4">
-                  <h1 className="text-5xl font-bold leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl">
-                    <span className="whitespace-nowrap">Your Perfect Ride,</span>{' '}
-                    <span className="bg-gradient-to-r from-blue-500 to-blue-300 bg-clip-text text-transparent">
+              <div className="space-y-6 sm:space-y-8">
+                <div className="space-y-3 sm:space-y-4">
+                  <h1 className="text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-center lg:text-left">
+                    <span className="block sm:inline sm:whitespace-nowrap">Your Perfect Ride,</span>{' '}
+                    <span className="block sm:inline bg-gradient-to-r from-blue-500 to-blue-300 bg-clip-text text-transparent">
                       Just a Click Away
                     </span>
                   </h1>
-                  <p className="text-xl leading-8 text-gray-300">
+                  <p className="text-base sm:text-lg md:text-xl leading-6 sm:leading-7 md:leading-8 text-gray-300 text-center lg:text-left">
                     Discover Nigeria's premier car rental platform. Rent premium vehicles instantly or list your fleet to earn extra income.
                   </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6" onClick={() => openRegisterModal('renter')}>
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center lg:items-start">
+                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto" onClick={() => openRegisterModal('renter')}>
                     Start Renting Now
                   </Button>
-                  <Button variant="outline" size="lg" className="border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white text-lg px-8 py-6" onClick={() => openRegisterModal('owner')}>
+                  <Button variant="outline" size="lg" className="border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto" onClick={() => openRegisterModal('owner')}>
                     List Your Cars
                   </Button>
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-3 gap-8 pt-8 border-t border-gray-700">
+                <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 pt-6 sm:pt-8 border-t border-gray-700">
                   <div>
-                    <div className="text-3xl font-bold text-blue-500">1000+</div>
-                    <div className="text-sm text-gray-400 mt-1">Available Cars</div>
+                    <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-500">1000+</div>
+                    <div className="text-xs sm:text-sm text-gray-400 mt-0.5 sm:mt-1">Available Cars</div>
                   </div>
                   <div>
-                    <div className="text-3xl font-bold text-blue-500">5000+</div>
-                    <div className="text-sm text-gray-400 mt-1">Happy Customers</div>
+                    <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-500">5000+</div>
+                    <div className="text-xs sm:text-sm text-gray-400 mt-0.5 sm:mt-1">Happy Customers</div>
                   </div>
                   <div>
-                    <div className="text-3xl font-bold text-blue-500">4.9★</div>
-                    <div className="text-sm text-gray-400 mt-1">Average Rating</div>
+                    <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-500">4.9★</div>
+                    <div className="text-xs sm:text-sm text-gray-400 mt-0.5 sm:mt-1">Average Rating</div>
                   </div>
                 </div>
               </div>
 
               {/* Right Image */}
               <div className="relative">
-                <div className="rounded-3xl bg-gradient-to-br from-gray-800 to-gray-900 p-8">
+                <div className="rounded-2xl sm:rounded-3xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 sm:p-6 md:p-8">
                   <img 
                     src="/Frame 2147226662.svg" 
                     alt="Premium Car" 
@@ -237,22 +313,22 @@ export default function Onboarding() {
                   />
                   
                   {/* Car Details */}
-                  <div className="mt-6 grid grid-cols-2 gap-4">
-                    <div className="rounded-lg bg-gray-800 p-4 text-center">
-                      <div className="text-2xl font-bold text-white">272km/h</div>
-                      <div className="text-sm text-gray-400">Top Speed</div>
+                  <div className="mt-4 sm:mt-6 grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
+                    <div className="rounded-lg bg-gray-800 p-2.5 sm:p-3 md:p-4 text-center">
+                      <div className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white">272km/h</div>
+                      <div className="text-xs sm:text-sm text-gray-400 mt-0.5">Top Speed</div>
                     </div>
-                    <div className="rounded-lg bg-gray-800 p-4 text-center">
-                      <div className="text-2xl font-bold text-white">3.2s</div>
-                      <div className="text-sm text-gray-400">0-100 km/h</div>
+                    <div className="rounded-lg bg-gray-800 p-2.5 sm:p-3 md:p-4 text-center">
+                      <div className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white">3.2s</div>
+                      <div className="text-xs sm:text-sm text-gray-400 mt-0.5">0-100 km/h</div>
                     </div>
-                    <div className="rounded-lg bg-gray-800 p-4 text-center">
-                      <div className="text-2xl font-bold text-white">450hp</div>
-                      <div className="text-sm text-gray-400">Horsepower</div>
+                    <div className="rounded-lg bg-gray-800 p-2.5 sm:p-3 md:p-4 text-center">
+                      <div className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white">450hp</div>
+                      <div className="text-xs sm:text-sm text-gray-400 mt-0.5">Horsepower</div>
                     </div>
-                    <div className="rounded-lg bg-gray-800 p-4 text-center">
-                      <div className="text-2xl font-bold text-white">AWD</div>
-                      <div className="text-sm text-gray-400">Drive Type</div>
+                    <div className="rounded-lg bg-gray-800 p-2.5 sm:p-3 md:p-4 text-center">
+                      <div className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white">AWD</div>
+                      <div className="text-xs sm:text-sm text-gray-400 mt-0.5">Drive Type</div>
                     </div>
                   </div>
                 </div>
@@ -262,51 +338,51 @@ export default function Onboarding() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="bg-gray-800 py-24">
+        <section id="features" className="bg-gray-800 py-12 sm:py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-white mb-4">
+            <div className="text-center mb-10 sm:mb-12 md:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
                 Why Choose Fleetly?
               </h2>
-              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
                 Experience hassle-free car rental with verified vehicles, instant booking, and 24/7 support
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {[
                 {
-                  icon: <Car className="h-8 w-8" />,
+                  icon: <Car className="h-6 w-6 sm:h-8 sm:w-8" />,
                   title: 'Premium Fleet',
                   description: 'Choose from a wide selection of verified, well-maintained vehicles for any occasion',
                   color: 'blue',
                 },
                 {
-                  icon: <Shield className="h-8 w-8" />,
+                  icon: <Shield className="h-6 w-6 sm:h-8 sm:w-8" />,
                   title: 'Fully Insured',
                   description: 'All rentals include comprehensive insurance and 24/7 roadside assistance',
                   color: 'green',
                 },
                 {
-                  icon: <Clock className="h-8 w-8" />,
+                  icon: <Clock className="h-6 w-6 sm:h-8 sm:w-8" />,
                   title: 'Instant Booking',
                   description: 'Book your car in minutes with our streamlined verification process',
                   color: 'purple',
                 },
                 {
-                  icon: <Award className="h-8 w-8" />,
+                  icon: <Award className="h-6 w-6 sm:h-8 sm:w-8" />,
                   title: 'Best Prices',
                   description: 'Competitive rates with transparent pricing and no hidden fees',
                   color: 'orange',
                 },
                 {
-                  icon: <MapPin className="h-8 w-8" />,
+                  icon: <MapPin className="h-6 w-6 sm:h-8 sm:w-8" />,
                   title: 'Flexible Pickup',
                   description: 'Choose from multiple locations or get free delivery to your doorstep',
                   color: 'red',
                 },
                 {
-                  icon: <Users className="h-8 w-8" />,
+                  icon: <Users className="h-6 w-6 sm:h-8 sm:w-8" />,
                   title: 'Trusted Community',
                   description: 'Join thousands of verified renters and business owners across Nigeria',
                   color: 'indigo',
@@ -314,15 +390,15 @@ export default function Onboarding() {
               ].map((feature, index) => (
                 <div
                   key={index}
-                  className="group rounded-2xl border border-gray-700 bg-gray-900 p-8 shadow-sm transition-all hover:shadow-lg hover:border-blue-500"
+                  className="group rounded-xl sm:rounded-2xl border border-gray-700 bg-gray-900 p-5 sm:p-6 md:p-8 shadow-sm transition-all hover:shadow-lg hover:border-blue-500"
                 >
-                  <div className={`flex h-14 w-14 items-center justify-center rounded-xl bg-${feature.color}-500/10 text-${feature.color}-500 mb-4`}>
+                  <div className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl bg-${feature.color}-500/10 text-${feature.color}-500 mb-3 sm:mb-4`}>
                     {feature.icon}
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-2">
+                  <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-400">
+                  <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -332,21 +408,21 @@ export default function Onboarding() {
         </section>
 
         {/* How It Works Section with Toggle */}
-        <section id="how-it-works" className="bg-[#272727] py-24">
+        <section id="how-it-works" className="bg-[#272727] py-12 sm:py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-white mb-4">
+            <div className="text-center mb-10 sm:mb-12 md:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
                 How It Works
               </h2>
-              <p className="text-xl text-gray-300 mb-8">
+              <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8">
                 Get on the road in three simple steps
               </p>
 
               {/* Toggle Buttons */}
-              <div className="inline-flex rounded-lg border border-gray-700 bg-gray-800 p-1">
+              <div className="inline-flex rounded-lg border border-gray-700 bg-gray-800 p-1 w-full max-w-xs sm:max-w-none sm:w-auto">
                 <button
                   onClick={() => setHowItWorksTab('renters')}
-                  className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors ${
                     howItWorksTab === 'renters'
                       ? 'bg-blue-600 text-white'
                       : 'text-gray-400 hover:text-white'
@@ -356,7 +432,7 @@ export default function Onboarding() {
                 </button>
                 <button
                   onClick={() => setHowItWorksTab('owners')}
-                  className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors ${
                     howItWorksTab === 'owners'
                       ? 'bg-orange-500 text-white'
                       : 'text-gray-400 hover:text-white'
@@ -367,29 +443,29 @@ export default function Onboarding() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-8 sm:gap-10 md:gap-12 md:grid-cols-3">
               {(howItWorksTab === 'renters' ? rentersSteps : ownersSteps).map((item, index) => (
-                <div key={index} className="relative text-center pt-20">
+                <div key={index} className="relative text-center pt-16 sm:pt-20">
                   {/* Step Number */}
-                  <div className={`absolute top-0 left-1/2 -translate-x-1/2 text-7xl font-bold leading-none ${
+                  <div className={`absolute top-0 left-1/2 -translate-x-1/2 text-5xl sm:text-6xl md:text-7xl font-bold leading-none ${
                     howItWorksTab === 'renters' ? 'text-blue-500/40' : 'text-orange-500/40'
                   } pointer-events-none select-none`}>
                     {item.step}
                   </div>
                   
                   {/* Icon Container */}
-                  <div className="relative mb-6 mt-8 flex justify-center">
-                    <div className={`flex h-20 w-20 items-center justify-center rounded-full ${
+                  <div className="relative mb-4 sm:mb-6 mt-6 sm:mt-8 flex justify-center">
+                    <div className={`flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full ${
                       howItWorksTab === 'renters' ? 'bg-blue-500/10' : 'bg-orange-500/10'
                     }`}>
                       {item.icon}
                     </div>
                   </div>
                   
-                  <h3 className="text-2xl font-bold text-white mb-3">
+                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">
                     {item.title}
                   </h3>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
                     {item.description}
                   </p>
                 </div>
@@ -399,26 +475,26 @@ export default function Onboarding() {
         </section>
 
         {/* CTA Section */}
-        <section className="bg-gradient-to-r from-blue-600 to-blue-500 py-24">
+        <section className="bg-gradient-to-r from-blue-600 to-blue-500 py-12 sm:py-16 md:py-24">
           <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-            <h2 className="text-4xl font-bold text-white sm:text-5xl mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
               Ready to Get Started?
             </h2>
-            <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-blue-100 mb-8 sm:mb-10 max-w-2xl mx-auto">
               Join thousands of users already enjoying seamless car rentals. Sign up now and get verified in minutes!
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6"
+                className="border-white bg-white text-blue-600 hover:bg-blue-50 text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto"
                 onClick={() => openRegisterModal('renter')}
               >
                 Create Free Account
               </Button>
               <Button
                 size="lg"
-                className="bg-blue-700 hover:bg-blue-800 text-white text-lg px-8 py-6"
+                className="bg-blue-700 hover:bg-blue-800 text-white text-base sm:text-lg px-6 sm:px-8 w-full sm:w-auto"
                 onClick={openLoginModal}
               >
                 Sign In
@@ -428,18 +504,18 @@ export default function Onboarding() {
         </section>
 
         {/* Testimonials Section */}
-        <section id="testimonials" className="bg-gray-800 py-24">
+        <section id="testimonials" className="bg-gray-800 py-12 sm:py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-white mb-4">
+            <div className="text-center mb-10 sm:mb-12 md:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
                 Loved by Customers
               </h2>
-              <p className="text-xl text-gray-300">
+              <p className="text-base sm:text-lg md:text-xl text-gray-300">
                 See what our community has to say
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-3">
               {[
                 {
                   name: 'Adebayo Johnson',
@@ -462,23 +538,23 @@ export default function Onboarding() {
               ].map((testimonial, index) => (
                 <div
                   key={index}
-                  className="rounded-2xl border border-gray-700 bg-gray-900 p-8 shadow-sm"
+                  className="rounded-xl sm:rounded-2xl border border-gray-700 bg-gray-900 p-5 sm:p-6 md:p-8 shadow-sm"
                 >
-                  <div className="mb-4 flex gap-1">
+                  <div className="mb-3 sm:mb-4 flex gap-1">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                      <Star key={i} className="h-4 w-4 sm:h-5 sm:w-5 fill-yellow-400 text-yellow-400" />
                     ))}
                   </div>
-                  <p className="text-gray-300 mb-6 leading-relaxed">
+                  <p className="text-sm sm:text-base text-gray-300 mb-4 sm:mb-6 leading-relaxed">
                     "{testimonial.text}"
                   </p>
                   <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10 text-blue-500 font-bold text-lg">
+                    <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-blue-500 font-bold text-base sm:text-lg">
                       {testimonial.name.charAt(0)}
                     </div>
                     <div>
-                      <div className="font-semibold text-white">{testimonial.name}</div>
-                      <div className="text-sm text-gray-400">{testimonial.role}</div>
+                      <div className="text-sm sm:text-base font-semibold text-white">{testimonial.name}</div>
+                      <div className="text-xs sm:text-sm text-gray-400">{testimonial.role}</div>
                     </div>
                   </div>
                 </div>

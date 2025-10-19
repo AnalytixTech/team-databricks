@@ -34,25 +34,25 @@ export default function Home() {
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
             {/* Left Content */}
             <div className="flex flex-col justify-center text-center lg:text-left">
-              <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
+              <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
                 One Platform.{' '}
                 <span className="text-primary-400">Two Experience</span>
               </h1>
-              <p className="mt-6 text-base sm:text-lg leading-7 sm:leading-8 text-gray-300">
+              <p className="mt-4 sm:mt-6 text-sm sm:text-base md:text-lg leading-6 sm:leading-7 md:leading-8 text-gray-300">
                 Fleetly connects renters with reliable vehicles and empowers fleet owners 
                 with powerful management tools. Whether you're looking to rent your dream 
                 car or manage your fleet efficiently, we've got you covered.
               </p>
-              <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                <Link to="/register">
+              <div className="mt-6 sm:mt-8 md:mt-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-4 justify-center lg:justify-start">
+                <Link to="/register" className="w-full sm:w-auto">
                   <Button size="lg" className="w-full sm:w-auto">
                     Get Started
                   </Button>
                 </Link>
-                <Link to="/cars">
+                <Link to="/cars" className="w-full sm:w-auto">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto border-gray-600 text-white hover:bg-gray-800">
                     Learn More
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 </Link>
               </div>
@@ -72,21 +72,21 @@ export default function Home() {
                 
                 {/* Car Stats */}
                 <div className="mt-6 sm:mt-8 grid grid-cols-2 gap-2 sm:gap-4 text-center">
-                  <div className="bg-gray-800/50 rounded-lg p-2 sm:p-3 backdrop-blur">
-                    <p className="text-base sm:text-xl lg:text-2xl font-bold text-primary-400 truncate">200km/h</p>
-                    <p className="text-xs text-gray-400">Highest Speed</p>
+                  <div className="bg-gray-800/50 rounded-lg p-2.5 sm:p-3 backdrop-blur">
+                    <p className="text-sm sm:text-lg md:text-xl lg:text-2xl font-bold text-primary-400">200km/h</p>
+                    <p className="text-xs sm:text-sm text-gray-400 mt-0.5">Highest Speed</p>
                   </div>
-                  <div className="bg-gray-800/50 rounded-lg p-2 sm:p-3 backdrop-blur">
-                    <p className="text-base sm:text-xl lg:text-2xl font-bold text-primary-400 truncate">160km</p>
-                    <p className="text-xs text-gray-400">Battery Range</p>
+                  <div className="bg-gray-800/50 rounded-lg p-2.5 sm:p-3 backdrop-blur">
+                    <p className="text-sm sm:text-lg md:text-xl lg:text-2xl font-bold text-primary-400">160km</p>
+                    <p className="text-xs sm:text-sm text-gray-400 mt-0.5">Battery Range</p>
                   </div>
-                  <div className="bg-gray-800/50 rounded-lg p-2 sm:p-3 backdrop-blur">
-                    <p className="text-base sm:text-xl lg:text-2xl font-bold text-primary-400 truncate">4 hours</p>
-                    <p className="text-xs text-gray-400">Charging Time</p>
+                  <div className="bg-gray-800/50 rounded-lg p-2.5 sm:p-3 backdrop-blur">
+                    <p className="text-sm sm:text-lg md:text-xl lg:text-2xl font-bold text-primary-400">4 hours</p>
+                    <p className="text-xs sm:text-sm text-gray-400 mt-0.5">Charging Time</p>
                   </div>
-                  <div className="bg-gray-800/50 rounded-lg p-2 sm:p-3 backdrop-blur">
-                    <p className="text-base sm:text-xl lg:text-2xl font-bold text-primary-400 truncate">1696kg</p>
-                    <p className="text-xs text-gray-400">Weight</p>
+                  <div className="bg-gray-800/50 rounded-lg p-2.5 sm:p-3 backdrop-blur">
+                    <p className="text-sm sm:text-lg md:text-xl lg:text-2xl font-bold text-primary-400">1696kg</p>
+                    <p className="text-xs sm:text-sm text-gray-400 mt-0.5">Weight</p>
                   </div>
                 </div>
               </div>
@@ -96,23 +96,23 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="bg-gray-800 py-16 sm:py-24 lg:py-32">
+      <section className="bg-gray-800 py-12 sm:py-16 md:py-24 lg:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+            <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl lg:text-5xl">
               How It Works
             </h2>
-            <p className="mt-4 text-base sm:text-lg text-gray-300 max-w-2xl mx-auto">
+            <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg text-gray-300 max-w-2xl mx-auto">
               Simple steps for both renters and owners to get started on Fleetly
             </p>
           </div>
 
           {/* Tab Switcher */}
-          <div className="mt-10 sm:mt-12 flex justify-center">
-            <div className="inline-flex rounded-lg bg-gray-900 p-1">
+          <div className="mt-8 sm:mt-10 md:mt-12 flex justify-center">
+            <div className="inline-flex rounded-lg bg-gray-900 p-1 w-full max-w-xs sm:max-w-none sm:w-auto">
               <button
                 onClick={() => setActiveTab('renters')}
-                className={`px-6 sm:px-8 py-2 sm:py-3 rounded-lg font-medium transition-colors ${
+                className={`flex-1 sm:flex-none px-5 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-colors ${
                   activeTab === 'renters'
                     ? 'bg-primary-600 text-white'
                     : 'text-gray-400 hover:text-white'
@@ -122,7 +122,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setActiveTab('owners')}
-                className={`px-6 sm:px-8 py-2 sm:py-3 rounded-lg font-medium transition-colors ${
+                className={`flex-1 sm:flex-none px-5 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-colors ${
                   activeTab === 'owners'
                     ? 'bg-primary-600 text-white'
                     : 'text-gray-400 hover:text-white'
@@ -187,13 +187,13 @@ export default function Home() {
       </section>
 
       {/* Why Choose Us Section */}
-      <section className="bg-gray-900 py-16 sm:py-24 lg:py-32">
+      <section className="bg-gray-900 py-12 sm:py-16 md:py-24 lg:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+            <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl lg:text-5xl">
               Why Choose Us
             </h2>
-            <p className="mt-4 text-base sm:text-lg text-gray-300 max-w-3xl mx-auto">
+            <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg text-gray-300 max-w-3xl mx-auto">
               We make car rentals effortless for renters and profitable for owners, all in one seamless platform
             </p>
           </div>
@@ -223,16 +223,16 @@ export default function Home() {
 
       {/* Popular Cars Section */}
       {popularCars.length > 0 && (
-        <section className="bg-gray-50 py-16 sm:py-24">
+        <section className="bg-gray-50 py-12 sm:py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <TrendingUp className="h-8 w-8 text-primary-600" />
-                <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
+                <TrendingUp className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-primary-600" />
+                <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
                   Popular Cars
                 </h2>
               </div>
-              <p className="mt-4 text-lg text-gray-600">
+              <p className="mt-2 sm:mt-4 text-sm sm:text-base md:text-lg text-gray-600">
                 Most booked vehicles by our community
               </p>
             </div>
@@ -248,11 +248,11 @@ export default function Home() {
                         className={`h-full w-full ${car.images.length > 0 ? 'object-cover' : 'object-contain p-8'}`}
                       />
                     </div>
-                    <CardContent className="p-6">
-                      <h3 className="text-xl font-semibold text-gray-900">
+                    <CardContent className="p-4 sm:p-5 md:p-6">
+                      <h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">
                         {car.make} {car.model}
                       </h3>
-                      <p className="mt-1 text-sm text-gray-600">
+                      <p className="mt-1 text-xs sm:text-sm text-gray-600">
                         {car.year} · {car.type.charAt(0).toUpperCase() + car.type.slice(1)}
                       </p>
                       {car.averageRating && car.averageRating > 0 && (
@@ -260,15 +260,15 @@ export default function Home() {
                           <Rating value={Math.round(car.averageRating)} readonly size="sm" showCount count={car.ratingCount} />
                         </div>
                       )}
-                      <div className="mt-4 flex items-center justify-between">
+                      <div className="mt-3 sm:mt-4 flex items-center justify-between">
                         <div>
-                          <p className="text-2xl font-bold text-primary-600">
+                          <p className="text-lg sm:text-xl md:text-2xl font-bold text-primary-600">
                             {formatCurrency(car.rentalPricePerDay)}
                           </p>
-                          <p className="text-sm text-gray-600">per day</p>
+                          <p className="text-xs sm:text-sm text-gray-600">per day</p>
                         </div>
                         {(car as any).bookingCount && (
-                          <div className="rounded-full bg-primary-100 px-3 py-1">
+                          <div className="rounded-full bg-primary-100 px-2 sm:px-3 py-1">
                             <p className="text-xs font-medium text-primary-700">
                               {(car as any).bookingCount} bookings
                             </p>
@@ -295,19 +295,19 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className="bg-primary-600">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:py-16 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+            <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
               Ready to get started?
             </h2>
-            <p className="mt-4 text-lg text-primary-100">
+            <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg text-primary-100">
               Join thousands of satisfied customers and rent your car today
             </p>
-            <div className="mt-8">
+            <div className="mt-6 sm:mt-8">
               <Link to="/register">
                 <Button
                   size="lg"
-                  className="bg-white text-primary-600 hover:bg-gray-100"
+                  className="bg-white text-primary-600 hover:bg-gray-100 w-full sm:w-auto"
                 >
                   Create Free Account
                 </Button>
@@ -328,12 +328,12 @@ interface StepCardProps {
 
 function StepCard({ icon, title, description }: StepCardProps) {
   return (
-    <div className="bg-gray-700/50 rounded-xl p-6 sm:p-8 backdrop-blur">
-      <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-yellow-400 mb-4">
+    <div className="bg-gray-700/50 rounded-xl p-5 sm:p-6 md:p-8 backdrop-blur">
+      <div className="flex h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 items-center justify-center rounded-full bg-yellow-400 mb-3 sm:mb-4">
         {icon}
       </div>
-      <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">{title}</h3>
-      <p className="text-sm sm:text-base text-gray-300">{description}</p>
+      <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-2">{title}</h3>
+      <p className="text-xs sm:text-sm md:text-base text-gray-300 leading-relaxed">{description}</p>
     </div>
   );
 }
@@ -349,12 +349,12 @@ function WhyChooseCard({ icon, title, description, variant }: WhyChooseCardProps
   const bgColor = variant === 'blue' ? 'bg-primary-600' : 'bg-gray-800/80';
   
   return (
-    <div className={`${bgColor} rounded-xl p-6 sm:p-8 backdrop-blur`}>
-      <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-primary-500/30 mb-4 sm:mb-6">
+    <div className={`${bgColor} rounded-xl p-5 sm:p-6 md:p-8 backdrop-blur`}>
+      <div className="flex h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 items-center justify-center rounded-full bg-primary-500/30 mb-3 sm:mb-4 md:mb-6">
         {icon}
       </div>
-      <h3 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">{title}</h3>
-      <p className="text-sm sm:text-base text-gray-200 leading-relaxed">{description}</p>
+      <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-2 sm:mb-3 md:mb-4">{title}</h3>
+      <p className="text-xs sm:text-sm md:text-base text-gray-200 leading-relaxed">{description}</p>
     </div>
   );
 }
