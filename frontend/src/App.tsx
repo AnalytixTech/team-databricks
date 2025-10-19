@@ -27,6 +27,17 @@ function App() {
     checkAuth();
   }, [checkAuth]);
 
+  // Scroll to top on route change
+  useEffect(() => {
+    const unsubscribe = router.subscribe('onResolved', () => {
+      window.scrollTo(0, 0);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <>
       <RouterProvider

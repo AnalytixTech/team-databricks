@@ -222,6 +222,8 @@ export default function UserDashboard() {
                   <div className="space-y-3">
                     {getActiveReservations().slice(0, 3).map((reservation) => {
                       const car = reservation.carId as ICar;
+                      if (!car) return null;
+                      
                       const daysLeft = Math.ceil(
                         (new Date(reservation.endDate).getTime() - new Date().getTime()) / 
                         (1000 * 60 * 60 * 24)
@@ -296,6 +298,8 @@ export default function UserDashboard() {
                   <div className="space-y-3">
                     {getUpcomingReservations().map((reservation) => {
                       const car = reservation.carId as ICar;
+                      if (!car) return null;
+                      
                       const daysUntil = Math.ceil(
                         (new Date(reservation.startDate).getTime() - new Date().getTime()) / 
                         (1000 * 60 * 60 * 24)
@@ -388,6 +392,8 @@ export default function UserDashboard() {
                 <div className="space-y-3">
                   {reservations.slice(0, 5).map((reservation) => {
                     const car = reservation.carId as ICar;
+                    if (!car) return null;
+                    
                     return (
                       <div
                         key={reservation._id}
