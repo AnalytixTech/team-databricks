@@ -18,6 +18,8 @@ import {
   User,
   CreditCard,
   CheckCircle,
+  AlertTriangle,
+  Wrench,
 } from 'lucide-react';
 import SidebarLayout from '@/components/layout/SidebarLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -31,7 +33,7 @@ import LocationTracker from '@/components/ui/LocationTracker';
 import ChatWindow from '@/components/ui/ChatWindow';
 import { carService } from '@/services/car.service';
 import { dashboardService } from '@/services/dashboard.service';
-import { ICar, IReservation, CarType, DetailedReport, ReservationStatus, PaymentStatus } from '@/types';
+import { ICar, IReservation, CarType, DetailedReport, ReservationStatus, PaymentStatus, IMaintenanceAlert } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
 
@@ -64,6 +66,7 @@ export default function Dashboard() {
   const [cars, setCars] = useState<ICar[]>([]);
   const [reservations, setReservations] = useState<IReservation[]>([]);
   const [report, setReport] = useState<DetailedReport | null>(null);
+  const [maintenanceAlerts, setMaintenanceAlerts] = useState<IMaintenanceAlert[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCarModal, setShowCarModal] = useState(false);
   const [editingCar, setEditingCar] = useState<ICar | null>(null);
@@ -123,7 +126,7 @@ export default function Dashboard() {
       const startDateParam = dateRange.startDate || undefined;
       const endDateParam = dateRange.endDate || undefined;
       
-      const [carsData, reservationsData, reportData] = await Promise.all([
+      const [carsData, reservationsData, reportData, alertsData] = await Promise.all([
         dashboardService.getOwnerCars().catch(() => []),
         dashboardService.getAllReservations().catch(() => []),
         dashboardService.getReports(startDateParam, endDateParam).catch(() => ({
@@ -136,9 +139,11 @@ export default function Dashboard() {
           reservationsByStatus: [],
           reservationsByType: [],
         })),
+        dashboardService.getMaintenanceAlerts().catch(() => []),
       ]);      
       setCars(carsData || []);
       setReservations(reservationsData || []);
+      setMaintenanceAlerts(alertsData || []);
       setReport(reportData || {
         overview: {
           totalRevenue: 0,
@@ -155,6 +160,7 @@ export default function Dashboard() {
       // Set fallback data
       setCars([]);
       setReservations([]);
+      setMaintenanceAlerts([]);
       setReport({
         overview: {
           totalRevenue: 0,
@@ -676,6 +682,60 @@ export default function Dashboard() {
                   color="orange"
                 />
               </div>
+
+              {/* Maintenance Alerts Section */}
+              {maintenanceAlerts.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5 text-orange-600" />
+                      <CardTitle>Maintenance Alerts</CardTitle>
+                      <Badge variant="warning">{maintenanceAlerts.length}</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {maintenanceAlerts.map((alert) => (
+                        <div
+                          key={alert.carId}
+                          className="flex items-start gap-3 rounded-lg bg-orange-50 border border-orange-200 p-4"
+                        >
+                          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-orange-100">
+                            <Wrench className="h-5 w-5 text-orange-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-gray-900">
+                              {alert.make} {alert.model}
+                            </h4>
+                            <p className="text-sm text-gray-700 mt-1">{alert.message}</p>
+                            {alert.currentMileage && alert.serviceRequested && (
+                              <div className="mt-2 flex gap-4 text-xs text-gray-600">
+                                <span>
+                                  <strong>Current:</strong> {alert.currentMileage.toLocaleString()} km
+                                </span>
+                                <span>
+                                  <strong>Service Due:</strong> {alert.serviceRequested.toLocaleString()} km
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              // Navigate to cars tab and find the car
+                              setActiveTab('cars');
+                              window.location.hash = 'cars';
+                            }}
+                          >
+                            View Car
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* My Location Tracker */}
               <Card>

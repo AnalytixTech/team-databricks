@@ -8,62 +8,63 @@ import {
   ReservationStatus,
   PaymentStatus,
   AuthResponse,
-} from '@/types';
+  IMaintenanceAlert,
+} from "@/types";
 
 export const mockUser: IUser = {
-  _id: 'user123',
-  email: 'test@example.com',
-  phone: '+2341234567890',
+  _id: "user123",
+  email: "test@example.com",
+  phone: "+2341234567890",
   role: UserRole.USER,
   profile: {
     savedPaymentMethods: [],
   },
-  createdAt: '2024-01-01T00:00:00.000Z',
-  updatedAt: '2024-01-01T00:00:00.000Z',
+  createdAt: "2024-01-01T00:00:00.000Z",
+  updatedAt: "2024-01-01T00:00:00.000Z",
 };
 
 export const mockBusinessOwner: IUser = {
-  _id: 'owner123',
-  email: 'owner@example.com',
-  phone: '+2341234567890',
+  _id: "owner123",
+  email: "owner@example.com",
+  phone: "+2341234567890",
   role: UserRole.BUSINESS_OWNER,
   profile: {
-    businessName: 'Test Car Rentals',
+    businessName: "Test Car Rentals",
     savedPaymentMethods: [],
   },
-  createdAt: '2024-01-01T00:00:00.000Z',
-  updatedAt: '2024-01-01T00:00:00.000Z',
+  createdAt: "2024-01-01T00:00:00.000Z",
+  updatedAt: "2024-01-01T00:00:00.000Z",
 };
 
 export const mockAuthResponse: AuthResponse = {
   user: mockUser,
-  token: 'mock-jwt-token',
-  refreshToken: 'mock-refresh-token',
+  token: "mock-jwt-token",
+  refreshToken: "mock-refresh-token",
 };
 
 export const mockCar: ICar = {
-  _id: 'car123',
-  make: 'Toyota',
-  model: 'Camry',
+  _id: "car123",
+  make: "Toyota",
+  model: "Camry",
   type: CarType.SEDAN,
   year: 2023,
-  licensePlate: 'ABC123XY',
+  licensePlate: "ABC123XY",
   mileage: 15000,
   rentalPricePerDay: 25000,
-  images: ['image1.jpg', 'image2.jpg'],
+  images: ["image1.jpg", "image2.jpg"],
   availability: {
-    status: 'available',
+    status: "available",
     blockedDates: [],
   },
-  ownerId: 'owner123',
-  createdAt: '2024-01-01T00:00:00.000Z',
-  updatedAt: '2024-01-01T00:00:00.000Z',
+  ownerId: "owner123",
+  createdAt: "2024-01-01T00:00:00.000Z",
+  updatedAt: "2024-01-01T00:00:00.000Z",
   averageRating: 4.5,
   ratingCount: 10,
   location: {
-    address: '123 Test Street',
-    city: 'Lagos',
-    state: 'Lagos',
+    address: "123 Test Street",
+    city: "Lagos",
+    state: "Lagos",
     coordinates: {
       lat: 6.5244,
       lng: 3.3792,
@@ -72,56 +73,56 @@ export const mockCar: ICar = {
 };
 
 export const mockReservation: IReservation = {
-  _id: 'reservation123',
+  _id: "reservation123",
   carId: mockCar,
-  userId: 'user123',
+  userId: "user123",
   driverLicense: {
-    number: 'DL123456',
-    expiryDate: '2025-12-31',
+    number: "DL123456",
+    expiryDate: "2025-12-31",
   },
   reservationType: ReservationType.FIRM_RESERVE,
-  startDate: '2024-02-01',
-  endDate: '2024-02-05',
+  startDate: "2024-02-01",
+  endDate: "2024-02-05",
   status: ReservationStatus.CONFIRMED,
   totalPrice: 100000,
   depositPaid: 0,
   paymentStatus: PaymentStatus.FULLY_PAID,
-  createdAt: '2024-01-15T00:00:00.000Z',
-  updatedAt: '2024-01-15T00:00:00.000Z',
+  createdAt: "2024-01-15T00:00:00.000Z",
+  updatedAt: "2024-01-15T00:00:00.000Z",
 };
 
 export const mockSoftReservation: IReservation = {
   ...mockReservation,
-  _id: 'soft-reservation123',
+  _id: "soft-reservation123",
   reservationType: ReservationType.SOFT_RESERVE,
   status: ReservationStatus.PENDING,
   paymentStatus: PaymentStatus.PENDING,
-  softReserveExpiry: '2024-01-16T00:00:00.000Z',
+  softReserveExpiry: "2024-01-16T00:00:00.000Z",
   guestInfo: {
-    email: 'guest@example.com',
-    phone: '+2341234567890',
+    email: "guest@example.com",
+    phone: "+2341234567890",
   },
 };
 
 export const mockPayment = {
-  _id: 'payment123',
-  reservationId: 'reservation123',
-  userId: 'user123',
+  _id: "payment123",
+  reservationId: "reservation123",
+  userId: "user123",
   amount: 100000,
-  type: 'full-payment',
-  paystackReference: 'ref123456',
-  status: 'success',
-  paidAt: '2024-01-15T00:00:00.000Z',
-  createdAt: '2024-01-15T00:00:00.000Z',
-  updatedAt: '2024-01-15T00:00:00.000Z',
+  type: "full-payment",
+  paystackReference: "ref123456",
+  status: "success",
+  paidAt: "2024-01-15T00:00:00.000Z",
+  createdAt: "2024-01-15T00:00:00.000Z",
+  updatedAt: "2024-01-15T00:00:00.000Z",
 };
 
 export const mockRevenueReport = {
   totalRevenue: 500000,
   totalBookings: 20,
   averageBookingValue: 25000,
-  periodStart: '2024-01-01',
-  periodEnd: '2024-01-31',
+  periodStart: "2024-01-01",
+  periodEnd: "2024-01-31",
 };
 
 export const mockDetailedReport = {
@@ -132,21 +133,42 @@ export const mockDetailedReport = {
   },
   topCars: [
     {
-      carId: 'car123',
-      make: 'Toyota',
-      model: 'Camry',
+      carId: "car123",
+      make: "Toyota",
+      model: "Camry",
       revenue: 150000,
       totalRevenue: 150000,
       bookingCount: 6,
     },
   ],
   reservationsByStatus: [
-    { _id: 'confirmed', count: 15 },
-    { _id: 'completed', count: 5 },
+    { _id: "confirmed", count: 15 },
+    { _id: "completed", count: 5 },
   ],
   reservationsByType: [
-    { _id: 'firm-reserve', count: 18 },
-    { _id: 'soft-reserve', count: 2 },
+    { _id: "firm-reserve", count: 18 },
+    { _id: "soft-reserve", count: 2 },
   ],
 };
+
+export const mockMaintenanceAlert: IMaintenanceAlert = {
+  carId: "car123",
+  make: "Toyota",
+  model: "Camry",
+  currentMileage: 55000,
+  serviceRequested: 50000,
+  message: "Service required: Toyota Camry has reached 55,000 km",
+};
+
+export const mockMaintenanceAlerts: IMaintenanceAlert[] = [
+  mockMaintenanceAlert,
+  {
+    carId: "car456",
+    make: "Honda",
+    model: "Accord",
+    currentMileage: 75000,
+    serviceRequested: 70000,
+    message: "Service required: Honda Accord has reached 75,000 km",
+  },
+];
 
