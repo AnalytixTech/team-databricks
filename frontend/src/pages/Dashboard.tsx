@@ -15,6 +15,9 @@ import {
   FileDown,
   MapPin,
   MessageCircle,
+  User,
+  CreditCard,
+  CheckCircle,
 } from 'lucide-react';
 import SidebarLayout from '@/components/layout/SidebarLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -844,53 +847,75 @@ export default function Dashboard() {
 
               {reservations.map((reservation) => {
                 const car = reservation.carId as ICar;
+                if (!car) return null;
+                
                 return (
                   <Card key={reservation._id}>
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-4">
+                    <CardContent className="p-4 sm:p-5 md:p-6">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col gap-2">
                             <div>
-                              <h3 className="text-lg font-semibold text-gray-900">
+                              <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
                                 {car.make} {car.model}
                               </h3>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-xs sm:text-sm text-gray-600">
                                 {format(new Date(reservation.startDate), 'MMM dd, yyyy')} -{' '}
                                 {format(new Date(reservation.endDate), 'MMM dd, yyyy')}
                               </p>
                             </div>
                           </div>
-                          <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
-                            <div>
-                              <p className="text-sm text-gray-600">Customer</p>
-                              <p className="font-medium text-gray-900 text-sm truncate">
-                                {reservation.guestInfo?.email || 'Registered User'}
-                              </p>
-                              {reservation.guestInfo?.phone && (
-                                <p className="text-xs text-gray-500">{reservation.guestInfo.phone}</p>
-                              )}
+                          <div className="mt-4 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+                            <div className="flex items-center gap-2 sm:gap-3">
+                              <div className="flex h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gray-100">
+                                <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs text-gray-600">Customer</p>
+                                <p className="font-medium text-xs sm:text-sm text-gray-900 truncate">
+                                  {reservation.guestInfo?.email || 'Registered User'}
+                                </p>
+                                {reservation.guestInfo?.phone && (
+                                  <p className="text-xs text-gray-500 truncate">{reservation.guestInfo.phone}</p>
+                                )}
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-sm text-gray-600">Total Price</p>
-                              <p className="font-medium text-gray-900">
-                                {formatCurrency(reservation.totalPrice)}
-                              </p>
+                            <div className="flex items-center gap-2 sm:gap-3">
+                              <div className="flex h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50">
+                                <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-primary-600" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs text-gray-600">Total Price</p>
+                                <p className="font-medium text-xs sm:text-sm text-gray-900 truncate">
+                                  {formatCurrency(reservation.totalPrice)}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-sm text-gray-600">Status</p>
-                              <Badge
-                                variant={
-                                  reservation.status === ReservationStatus.CONFIRMED
-                                    ? 'success'
-                                    : 'warning'
-                                }
-                              >
-                                {reservation.status}
-                              </Badge>
+                            <div className="flex items-center gap-2 sm:gap-3">
+                              <div className="flex h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-lg bg-green-50">
+                                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs text-gray-600">Status</p>
+                                <Badge
+                                  variant={
+                                    reservation.status === ReservationStatus.CONFIRMED
+                                      ? 'success'
+                                      : 'warning'
+                                  }
+                                >
+                                  {reservation.status}
+                                </Badge>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-sm text-gray-600">Payment</p>
-                              <Badge variant="info">{reservation.paymentStatus}</Badge>
+                            <div className="flex items-center gap-2 sm:gap-3">
+                              <div className="flex h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-lg bg-blue-50">
+                                <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs text-gray-600">Payment</p>
+                                <Badge variant="info">{reservation.paymentStatus}</Badge>
+                              </div>
                             </div>
                           </div>
 
@@ -913,7 +938,7 @@ export default function Dashboard() {
                             </div>
                           )}
                         </div>
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 mt-4 sm:mt-0">
                           {/* Chat Button - show for confirmed or active reservations with a userId */}
                           {reservation.userId && 
                            (reservation.status === ReservationStatus.CONFIRMED || 
@@ -922,34 +947,36 @@ export default function Dashboard() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleOpenChat(reservation)}
+                              className="w-full sm:w-auto"
                             >
                               <MessageCircle className="mr-2 h-4 w-4" />
                               Chat with Renter
                             </Button>
                           )}
                           
-                          <div className="flex gap-2">
-                            {reservation.status !== ReservationStatus.CANCELLED && 
-                             reservation.paymentStatus === PaymentStatus.PENDING && (
+                          {reservation.status !== ReservationStatus.CANCELLED && 
+                           reservation.paymentStatus === PaymentStatus.PENDING && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleReassignReservation(reservation)}
+                              className="w-full sm:w-auto"
+                            >
+                              Reassign
+                            </Button>
+                          )}
+                          {reservation.status !== ReservationStatus.CANCELLED && (
+                            <div className="relative group w-full sm:w-auto">
                               <Button
                                 size="sm"
-                                variant="outline"
-                                onClick={() => handleReassignReservation(reservation)}
+                                variant="danger"
+                                onClick={() => handleCancelReservation(reservation._id)}
+                                disabled={!canCancelReservation(reservation)}
+                                title={getCancelButtonTooltip(reservation)}
+                                className="w-full sm:w-auto"
                               >
-                                Reassign
+                                Cancel
                               </Button>
-                            )}
-                            {reservation.status !== ReservationStatus.CANCELLED && (
-                              <div className="relative group">
-                                <Button
-                                  size="sm"
-                                  variant="danger"
-                                  onClick={() => handleCancelReservation(reservation._id)}
-                                  disabled={!canCancelReservation(reservation)}
-                                  title={getCancelButtonTooltip(reservation)}
-                                >
-                                  Cancel
-                                </Button>
                                 {!canCancelReservation(reservation) && (
                                   <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block w-64 rounded-lg bg-gray-900 px-3 py-2 text-xs text-white shadow-lg">
                                     {getCancelButtonTooltip(reservation)}
@@ -957,7 +984,6 @@ export default function Dashboard() {
                                 )}
                               </div>
                             )}
-                          </div>
                         </div>
                       </div>
                     </CardContent>
