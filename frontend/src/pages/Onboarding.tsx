@@ -352,49 +352,30 @@ export default function Onboarding() {
             <div className="grid grid-cols-1 gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {[
                 {
-                  icon: <Car className="h-6 w-6 sm:h-8 sm:w-8" />,
                   title: 'Premium Fleet',
                   description: 'Choose from a wide selection of verified, well-maintained vehicles for any occasion',
-                  color: 'blue',
                 },
                 {
-                  icon: <Shield className="h-6 w-6 sm:h-8 sm:w-8" />,
-                  title: 'Fully Insured',
-                  description: 'All rentals include comprehensive insurance and 24/7 roadside assistance',
-                  color: 'green',
-                },
-                {
-                  icon: <Clock className="h-6 w-6 sm:h-8 sm:w-8" />,
                   title: 'Instant Booking',
                   description: 'Book your car in minutes with our streamlined verification process',
-                  color: 'purple',
                 },
                 {
-                  icon: <Award className="h-6 w-6 sm:h-8 sm:w-8" />,
                   title: 'Best Prices',
                   description: 'Competitive rates with transparent pricing and no hidden fees',
-                  color: 'orange',
                 },
                 {
-                  icon: <MapPin className="h-6 w-6 sm:h-8 sm:w-8" />,
                   title: 'Flexible Pickup',
                   description: 'Choose from multiple locations or get free delivery to your doorstep',
-                  color: 'red',
                 },
                 {
-                  icon: <Users className="h-6 w-6 sm:h-8 sm:w-8" />,
                   title: 'Trusted Community',
                   description: 'Join thousands of verified renters and business owners across Nigeria',
-                  color: 'indigo',
                 },
               ].map((feature, index) => (
                 <div
                   key={index}
                   className="group rounded-xl sm:rounded-2xl border border-gray-700 bg-gray-900 p-5 sm:p-6 md:p-8 shadow-sm transition-all hover:shadow-lg hover:border-blue-500"
                 >
-                  <div className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl bg-${feature.color}-500/10 text-${feature.color}-500 mb-3 sm:mb-4`}>
-                    {feature.icon}
-                  </div>
                   <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">
                     {feature.title}
                   </h3>

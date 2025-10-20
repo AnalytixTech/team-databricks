@@ -288,16 +288,16 @@ export default function MyReservations() {
                 return (
                   <Card key={reservation._id}>
                     <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle>
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-base sm:text-lg truncate">
                             {car.make} {car.model}
                           </CardTitle>
-                          <p className="mt-1 text-sm text-gray-600">
+                          <p className="mt-1 text-xs sm:text-sm text-gray-600">
                             {car.year} · {car.type}
                           </p>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                           <Badge variant={getStatusBadgeVariant(reservation.status)}>
                             {reservation.status}
                           </Badge>
@@ -308,40 +308,48 @@ export default function MyReservations() {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-                        <div className="flex items-center gap-3">
-                          <Calendar className="h-5 w-5 text-gray-400" />
-                          <div>
-                            <p className="text-sm text-gray-600">Start Date</p>
-                            <p className="font-medium">
+                      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="flex h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gray-100">
+                            <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs text-gray-600">Start Date</p>
+                            <p className="font-medium text-xs sm:text-sm truncate">
                               {format(new Date(reservation.startDate), 'MMM dd, yyyy')}
                             </p>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                          <Calendar className="h-5 w-5 text-gray-400" />
-                          <div>
-                            <p className="text-sm text-gray-600">End Date</p>
-                            <p className="font-medium">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="flex h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gray-100">
+                            <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs text-gray-600">End Date</p>
+                            <p className="font-medium text-xs sm:text-sm truncate">
                               {format(new Date(reservation.endDate), 'MMM dd, yyyy')}
                             </p>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                          <Clock className="h-5 w-5 text-gray-400" />
-                          <div>
-                            <p className="text-sm text-gray-600">Duration</p>
-                            <p className="font-medium">{days} days</p>
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="flex h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gray-100">
+                            <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs text-gray-600">Duration</p>
+                            <p className="font-medium text-xs sm:text-sm">{days} days</p>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                          <DollarSign className="h-5 w-5 text-gray-400" />
-                          <div>
-                            <p className="text-sm text-gray-600">Total Price</p>
-                            <p className="font-medium text-primary-600">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="flex h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50">
+                            <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-primary-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs text-gray-600">Total Price</p>
+                            <p className="font-medium text-xs sm:text-sm text-primary-600 truncate">
                               {formatCurrency(reservation.totalPrice)}
                             </p>
                           </div>
@@ -409,13 +417,14 @@ export default function MyReservations() {
                         </div>
                       )}
 
-                      <div className="mt-6 flex flex-wrap gap-3">
+                      <div className="mt-6 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3">
                         {/* View Car Location Button - show for confirmed reservations that haven't been picked up */}
                         {reservation.status === ReservationStatus.CONFIRMED && !reservation.pickedUpAt && (
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => handleViewCarLocation(car)}
+                            className="w-full sm:w-auto"
                           >
                             <MapPin className="mr-2 h-4 w-4" />
                             View Car Location
@@ -433,6 +442,7 @@ export default function MyReservations() {
                                   onClick={() => handleOpenDepositModal(reservation)}
                                   isLoading={isProcessing}
                                   disabled={isProcessing}
+                                  className="w-full sm:w-auto"
                                 >
                                   Pay Deposit (Min 30%)
                                 </Button>
@@ -442,8 +452,10 @@ export default function MyReservations() {
                                   onClick={() => handlePayment(reservation, PaymentType.FULL_PAYMENT)}
                                   isLoading={isProcessing}
                                   disabled={isProcessing}
+                                  className="w-full sm:w-auto"
                                 >
-                                  Pay Full Amount ({formatCurrency(reservation.totalPrice)})
+                                  <span className="hidden sm:inline">Pay Full Amount ({formatCurrency(reservation.totalPrice)})</span>
+                                  <span className="sm:hidden">Pay Full</span>
                                 </Button>
                                 <Button
                                   size="sm"
@@ -451,6 +463,7 @@ export default function MyReservations() {
                                   onClick={() => handleVerifyPayment(reservation._id)}
                                   isLoading={verifyingPayment === reservation._id}
                                   disabled={verifyingPayment === reservation._id}
+                                  className="w-full sm:w-auto"
                                 >
                                   <CheckCircle className="mr-2 h-4 w-4" />
                                   Verify Payment
@@ -464,8 +477,10 @@ export default function MyReservations() {
                                   onClick={() => handlePayment(reservation, PaymentType.FULL_PAYMENT)}
                                   isLoading={isProcessing}
                                   disabled={isProcessing}
+                                  className="w-full sm:w-auto"
                                 >
-                                  Pay Remaining Balance ({formatCurrency(reservation.totalPrice - (reservation.depositPaid || 0))})
+                                  <span className="hidden sm:inline">Pay Remaining Balance ({formatCurrency(reservation.totalPrice - (reservation.depositPaid || 0))})</span>
+                                  <span className="sm:hidden">Pay Balance</span>
                                 </Button>
                                 <Button
                                   size="sm"
@@ -473,6 +488,7 @@ export default function MyReservations() {
                                   onClick={() => handleVerifyPayment(reservation._id)}
                                   isLoading={verifyingPayment === reservation._id}
                                   disabled={verifyingPayment === reservation._id}
+                                  className="w-full sm:w-auto"
                                 >
                                   <CheckCircle className="mr-2 h-4 w-4" />
                                   Verify Payment
@@ -493,6 +509,7 @@ export default function MyReservations() {
                               setSelectedReservationForPickup(reservation);
                               setShowPickupModal(true);
                             }}
+                            className="w-full sm:w-auto"
                           >
                             <Package className="mr-2 h-4 w-4" />
                             Mark as Picked Up
@@ -508,6 +525,7 @@ export default function MyReservations() {
                               setSelectedReservationForReturn(reservation);
                               setShowReturnModal(true);
                             }}
+                            className="w-full sm:w-auto"
                           >
                             <PackageCheck className="mr-2 h-4 w-4" />
                             Mark as Returned
@@ -520,6 +538,7 @@ export default function MyReservations() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleOpenRatingModal(reservation)}
+                            className="w-full sm:w-auto"
                           >
                             <Star className="mr-2 h-4 w-4" />
                             Rate Experience
@@ -528,7 +547,7 @@ export default function MyReservations() {
 
                         {/* Show rating if already rated */}
                         {reservation.rating?.ratedAt && (
-                          <div className="flex items-center gap-2 rounded-lg bg-yellow-50 px-3 py-2">
+                          <div className="flex items-center justify-center sm:justify-start gap-2 rounded-lg bg-yellow-50 px-3 py-2 w-full sm:w-auto">
                             <Rating value={reservation.rating.stars} readonly size="sm" />
                             <span className="text-sm text-gray-600">Rated</span>
                           </div>
@@ -544,6 +563,7 @@ export default function MyReservations() {
                               setChatReservationId(reservation._id);
                               setShowChatModal(true);
                             }}
+                            className="w-full sm:w-auto"
                           >
                             <MessageCircle className="mr-2 h-4 w-4" />
                             Chat
@@ -557,6 +577,7 @@ export default function MyReservations() {
                               size="sm"
                               variant="danger"
                               onClick={() => handleCancelReservation(reservation._id)}
+                              className="w-full sm:w-auto"
                             >
                               <X className="mr-2 h-4 w-4" />
                               Cancel
