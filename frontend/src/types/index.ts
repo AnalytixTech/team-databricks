@@ -222,6 +222,16 @@ export interface DetailedReport {
   reservationsByType: StatusCount[];
 }
 
+// Maintenance Alert Types
+export interface IMaintenanceAlert {
+  carId: string;
+  make: string;
+  model: string;
+  currentMileage?: number;
+  serviceRequested?: number;
+  message: string;
+}
+
 // Auth Types
 export interface LoginCredentials {
   email: string;

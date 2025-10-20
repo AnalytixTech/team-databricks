@@ -1,5 +1,11 @@
 import axios from '@/lib/axios';
-import { IReservation, DetailedReport, ICar, ApiResponse } from '@/types';
+import {
+  IReservation,
+  DetailedReport,
+  ICar,
+  ApiResponse,
+  IMaintenanceAlert,
+} from "@/types";
 
 interface CreateReservationData {
   carId: string;
@@ -17,20 +23,22 @@ interface CreateReservationData {
 
 export const dashboardService = {
   async getOwnerCars(): Promise<ICar[]> {
-    const { data } = await axios.get<ApiResponse<ICar[]>>('/dashboard/cars');
+    const { data } = await axios.get<ApiResponse<ICar[]>>("/dashboard/cars");
     return data.data!;
   },
 
   async getAllReservations(): Promise<IReservation[]> {
     const { data } = await axios.get<ApiResponse<IReservation[]>>(
-      '/dashboard/reservations'
+      "/dashboard/reservations"
     );
     return data.data!;
   },
 
-  async createReservation(reservationData: CreateReservationData): Promise<IReservation> {
+  async createReservation(
+    reservationData: CreateReservationData
+  ): Promise<IReservation> {
     const { data } = await axios.post<ApiResponse<IReservation>>(
-      '/dashboard/reservations/create',
+      "/dashboard/reservations/create",
       reservationData
     );
     return data.data!;
@@ -43,7 +51,10 @@ export const dashboardService = {
     return data.data!;
   },
 
-  async reassignReservation(id: string, newCarId: string): Promise<IReservation> {
+  async reassignReservation(
+    id: string,
+    newCarId: string
+  ): Promise<IReservation> {
     const { data } = await axios.put<ApiResponse<IReservation>>(
       `/dashboard/reservations/${id}/reassign`,
       { newCarId }
@@ -51,10 +62,23 @@ export const dashboardService = {
     return data.data!;
   },
 
-  async getReports(startDate?: string, endDate?: string): Promise<DetailedReport> {
-    const { data } = await axios.get<ApiResponse<DetailedReport>>('/dashboard/reports', {
-      params: { startDate, endDate },
-    });
+  async getReports(
+    startDate?: string,
+    endDate?: string
+  ): Promise<DetailedReport> {
+    const { data } = await axios.get<ApiResponse<DetailedReport>>(
+      "/dashboard/reports",
+      {
+        params: { startDate, endDate },
+      }
+    );
+    return data.data!;
+  },
+
+  async getMaintenanceAlerts(): Promise<IMaintenanceAlert[]> {
+    const { data } = await axios.get<ApiResponse<IMaintenanceAlert[]>>(
+      "/dashboard/maintenance/alerts"
+    );
     return data.data!;
   },
 };
